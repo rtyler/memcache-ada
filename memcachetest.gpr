@@ -8,7 +8,7 @@ project MemcacheTest is
 
     package Compiler is
     for Default_Switches("ada") use
-            ("-g", "-gnat05");
+            ("-g", "-01", "-gnat05");
     end Compiler;
 end MemcacheTest;
 
