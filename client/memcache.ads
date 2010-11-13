@@ -3,10 +3,12 @@
 --
 
 package Memcache is
-    type Client is tagged record
+    type Client is private;
+    procedure Connect(M : in out Client; Host : in String; Port : in Natural);
+
+private
+    type Client is record
         Port : Natural := 11211;
         Host : String (1 .. 256);
     end record;
-
-    procedure Connect(M : in out Client; Host : in String; Port : in Natural);
 end Memcache;
