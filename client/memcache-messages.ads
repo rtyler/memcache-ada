@@ -5,8 +5,21 @@
 --  the memcached server running.
 --
 
+with Ada.Strings.Unbounded;
+use Ada.Strings.Unbounded;
+
 package Memcache.Messages is
-    type BasicMessage is tagged record
-        Name : String (1 .. 32);
+    type Message is limited private;
+
+    Stats : constant Message;
+
+    function Serialize(Message_In : in Message) return String;
+
+private
+    type Message is record
+        Raw_Command : Unbounded_String;
     end record;
+
+    Stats : constant Message := Message'(Raw_Command => To_Unbounded_String("stats\r\n"));
+
 end Memcache.Messages;
