@@ -1,8 +1,9 @@
 
-with AUnit.Assertions;
-use AUnit.Assertions;
+with AUnit.Test_Cases, AUnit.Assertions;
+use AUnit.Test_Cases, AUnit.Assertions;
 
 with Memcache.Messages;
+use Memcache.Messages;
 
 package body Test_Messages is
 
@@ -21,12 +22,14 @@ package body Test_Messages is
 
 
     --
-    --  Test methods
+    --  Tests
     --
-    procedure Test_Stats(T: in out AUnit.Test_Cases.Test_Case'Class) is
-        Serialized_Command : String := Memcache.Messages.Serialize(Memcache.Messages.Stats);
+
+    procedure Test_Stats(T: in out Test_Case'Class) is
+        Stats_Command : Message(C => Stats);
     begin
-        Assert(Serialized_Command = "stats\r\n", "Serialized stats command incorrect");
+        Assert(Serialize(Stats_Command) = "stats\r\n", "Serialized stats command is incorrect");
+        null;
     end Test_Stats;
 
 end Test_Messages;
