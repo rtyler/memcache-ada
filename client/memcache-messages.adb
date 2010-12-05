@@ -28,6 +28,8 @@ package body Memcache.Messages is
         case Message_In.C is
             when Stats =>
                 return "stats\r\n";
+            when Get =>
+                return "get " & Bounded.To_String(Message_In.Key) & "\r\n";
             when others =>
                 return "";
         end case;
