@@ -2,6 +2,7 @@
 #	A simple Makefile for building and testing memcache-ada
 
 GPRBUILD=gprbuild
+GPRCLEAN=gprclean
 TESTRUNNER=testrunner
 
 all:
@@ -13,5 +14,7 @@ test: all
 	./$(TESTRUNNER)
 
 clean:
+	$(GPRCLEAN) memcache.gpr
+	$(GPRCLEAN) memcachetest.gpr
 	rm -rf build
 	rm -f $(TESTRUNNER)
