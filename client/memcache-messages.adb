@@ -6,37 +6,26 @@ use Ada.Calendar;
 
 
 package body Memcache.Messages is
-
-    function Serialize (Time : Ada.Calendar.Time) return String is
-    begin -- Serialize
-        return "";
-    end Serialize;
-
-    function Serialize (Flags : Message_Flags) return String is
-    begin -- Serialize
-        return "";
-    end Serialize;
-
-    function Image (N : Natural) return String is
-    begin -- Image
-        -- Basically, just trim space from Natural'Image result
-        return "";
-    end Image;
-
-    function Serialize (Message_In : in Message) return String is
+    function Create return Stats is
+        M : Stats;
     begin
-        case Message_In.C is
-            when Stats =>
-                return "stats\r\n";
-            when Get =>
-                return "get " & Bounded.To_String(Message_In.Key) & "\r\n";
-            when others =>
-                return "";
-        end case;
-        --return Command'Image (Message_In.C) & " " &
-        --       Serialize (Message_In.Flags) & " " &
-        --       To_Unix_Time (Message_In.Expire_At) & " " &
-        --       Image (Message_In.Bytes);
+        return M;
+    end Create;
+
+    function Serialize(M : in Stats) return String is
+    begin
+        return "stats\r\n";
     end Serialize;
 
+
+    function Create(Key : in String) return Get is 
+        M : Get;
+    begin
+        return M;
+    end Create;
+
+    function Serialize(M : in Get) return String is
+    begin
+        return "get\r\n"; 
+    end Serialize;
 end Memcache.Messages;

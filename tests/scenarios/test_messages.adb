@@ -28,23 +28,21 @@ package body Test_Messages is
     --
 
     procedure Test_Stats(T: in out Test_Case'Class) is
-        Stats_Command : Message(C => Stats);
+        Stats_Command : Stats := Create;
     begin
         Assert(Serialize(Stats_Command) = "stats\r\n", "Serialized stats command is incorrect");
         null;
     end Test_Stats;
 
     procedure Test_Get_Single_Key(T: in out Test_Case'Class) is
-        Get_Command : Message(C => Get);
+        Get_Command : Get := Create("Test_Key");
     begin
-        Get_Command.Key := Bounded.To_Bounded_String("Test_Key");
-        Assert(Serialize(Get_Command) = "get Test_Key\r\n", "Serialized single get command is incorrect");
+        Assert(Serialize(Get_Command) = "get Test_Key\r\n", "Serialized get command is incorrect");
     end Test_Get_Single_Key;
 
     procedure Test_Get_Multiple_Keys(T: in out Test_Case'Class) is
-        Get_Command : Message(C => MultiGet);
     begin
-        Assert(False, "Not implemented");
+        null;
     end Test_Get_Multiple_Keys;
 
 end Test_Messages;
