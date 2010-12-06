@@ -19,17 +19,8 @@ package body Memcache.Messages is
         M : Get;
         Bounded_Key : Bounded.Bounded_String := Bounded.To_Bounded_String(Key);
     begin
-        -- Cannot use empty keys
-        if Bounded.Length(Bounded_Key) = 0 then
-            raise Invalid_Key_Error;
-        end if;
-
-        -- Canont use keys with spaces in them
-        if Bounded.Count(Source => Bounded_Key, Pattern => " ") /= 0 then
-            raise Invalid_Key_Error;
-        end if;
-
         M.Keys.Append(Bounded_Key);
+        Validate(M.Keys);
         return M;
     end Create;
 
@@ -37,6 +28,7 @@ package body Memcache.Messages is
         M : Get;
     begin
         M.Keys := Keys;
+        Validate(M.Keys);
         return  M;
     end Create;
 
@@ -55,6 +47,7 @@ package body Memcache.Messages is
             return To_String(Combined_Key);
         end Implode_Keys;
     begin
+        Validate(M.Keys);
         return "get " & Implode_Keys(M) & "\r\n";
     end Serialize;
 
@@ -70,4 +63,27 @@ package body Memcache.Messages is
     begin
         return "delete " & Bounded.To_String(M.Key) & "\r\n";
     end Serialize;
+
+
+    --  Private functions/procedures
+    --
+    procedure Validate(Keys : in Key_Vectors.Vector) is
+        Length : Natural := Natural(Key_Vectors.Length(Keys));
+    begin
+        for Index in 0 .. (Length - 1) loop
+            declare
+                Bounded_Key : Bounded.Bounded_String := Keys.Element(Index);
+            begin
+                -- Cannot use empty keys
+                if Bounded.Length(Bounded_Key) = 0 then
+                    raise Invalid_Key_Error;
+                end if;
+
+                -- Canont use keys with spaces in them
+                if Bounded.Count(Source => Bounded_Key, Pattern => " ") /= 0 then
+                    raise Invalid_Key_Error;
+                end if;
+            end;
+        end loop;
+    end;
 end Memcache.Messages;

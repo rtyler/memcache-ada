@@ -11,9 +11,11 @@ package Test_Messages is
     procedure Test_Stats(T: in out AUnit.Test_Cases.Test_Case'Class);
 
     procedure Test_Get_Multiple_Keys(T: in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Get_Multiple_Bad_Keys(T: in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Get_Single_Key(T: in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Get_No_Key(T: in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Get_Space_Key(T: in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Get_Space_Key2(T: in out AUnit.Test_Cases.Test_Case'Class);
 
     procedure Test_Delete_Key(T: in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Delete_No_Key(T: in out AUnit.Test_Cases.Test_Case'Class);

@@ -46,4 +46,8 @@ package Memcache.Messages is
     --
     Invalid_Key_Error : exception;
 
+private
+
+    procedure Validate(Keys : in Key_Vectors.Vector);
+
 end Memcache.Messages;
