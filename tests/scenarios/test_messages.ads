@@ -11,4 +11,5 @@ package Test_Messages is
     procedure Test_Stats(T: in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Get_Multiple_Keys(T: in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Get_Single_Key(T: in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Get_No_Key(T: in out AUnit.Test_Cases.Test_Case'Class);
 end Test_Messages;

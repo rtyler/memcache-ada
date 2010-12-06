@@ -13,6 +13,7 @@ package body Test_Messages is
         Register_Routine(T, Test_Stats'Access, "Test Stats Message");
         Register_Routine(T, Test_Get_Single_Key'Access, "Test GETing a single key");
         Register_Routine(T, Test_Get_Multiple_Keys'Access, "Test GETing multiple keys");
+        Register_Routine(T, Test_Get_No_Key'Access, "Test GET with no key (error)");
     end Register_Tests;
 
 
@@ -44,5 +45,10 @@ package body Test_Messages is
     begin
         Assert(False, "Serialized get command with multiple keys is incorrect");
     end Test_Get_Multiple_Keys;
+
+    procedure Test_Get_No_Key(T: in out Test_Case'Class) is
+    begin
+        Assert(False, "Not implemented");
+    end Test_Get_No_Key;
 
 end Test_Messages;
