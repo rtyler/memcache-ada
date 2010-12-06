@@ -11,10 +11,15 @@ package body Test_Messages is
         use AUnit.Test_Cases.Registration;
     begin
         Register_Routine(T, Test_Stats'Access, "Stats Message");
+
         Register_Routine(T, Test_Get_Single_Key'Access, "Get a single key");
         Register_Routine(T, Test_Get_Multiple_Keys'Access, "Get multiple keys");
         Register_Routine(T, Test_Get_No_Key'Access, "Get with no key (error)");
         Register_Routine(T, Test_Get_Space_Key'Access, "Get with a key with a space (error)");
+
+        Register_Routine(T, Test_Delete_Key'Access, "Delete a key");
+        Register_Routine(T, Test_Delete_No_Key'Access, "Delete with no key (error)");
+        Register_Routine(T, Test_Delete_Space_Key'Access, "Delete with a key with a space (error)");
     end Register_Tests;
 
 
@@ -35,6 +40,7 @@ package body Test_Messages is
         Assert(Serialize(Stats_Command) = "stats\r\n", "Serialized stats command is incorrect");
         null;
     end Test_Stats;
+
 
     procedure Test_Get_Single_Key(T: in out Test_Case'Class) is
         Get_Command : Get := Create("Test_Key");
@@ -75,4 +81,21 @@ package body Test_Messages is
         when others =>
             Assert(False, "Raised the wrong exception");
     end Test_Get_Space_Key;
+
+
+    procedure Test_Delete_Key(T: in out AUnit.Test_Cases.Test_Case'Class) is
+    begin
+        Assert(False, "not implemented");
+    end Test_Delete_Key;
+
+    procedure Test_Delete_No_Key(T: in out AUnit.Test_Cases.Test_Case'Class) is
+    begin
+        Assert(False, "not implemented");
+    end Test_Delete_No_Key;
+
+    procedure Test_Delete_Space_Key(T: in out AUnit.Test_Cases.Test_Case'Class) is
+    begin
+        Assert(False, "not implemented");
+    end Test_Delete_Space_Key;
+
 end Test_Messages;
