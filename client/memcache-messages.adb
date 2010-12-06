@@ -20,8 +20,19 @@ package body Memcache.Messages is
 
     function Create(Key : in String) return Get is 
         M : Get;
+        Bounded_Key : Bounded.Bounded_String := Bounded.To_Bounded_String(Key);
     begin
-        M.Keys.Append(Bounded.To_Bounded_String(Key));
+        -- Cannot use empty keys
+        if Key'Length = 0 then
+            raise Invalid_Key_Error;
+        end if;
+
+        -- Canont use keys with spaces in them
+        if Bounded.Count(Source => Bounded_Key, Pattern => " ") /= 0 then
+            raise Invalid_Key_Error;
+        end if;
+
+        M.Keys.Append(Bounded_Key);
         return M;
     end Create;
 

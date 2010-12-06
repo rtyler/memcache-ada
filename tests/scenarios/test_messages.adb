@@ -14,6 +14,7 @@ package body Test_Messages is
         Register_Routine(T, Test_Get_Single_Key'Access, "Test GETing a single key");
         Register_Routine(T, Test_Get_Multiple_Keys'Access, "Test GETing multiple keys");
         Register_Routine(T, Test_Get_No_Key'Access, "Test GET with no key (error)");
+        Register_Routine(T, Test_Get_Space_Key'Access, "Test GET with a key with a space (error)");
     end Register_Tests;
 
 
@@ -47,8 +48,26 @@ package body Test_Messages is
     end Test_Get_Multiple_Keys;
 
     procedure Test_Get_No_Key(T: in out Test_Case'Class) is
+        Get_Command : Get;
     begin
-        Assert(False, "Not implemented");
+        Get_Command := Create("");
+        Assert(False, "Should have raised an exception here");
+    exception
+        when Invalid_Key_Error =>
+            Assert(True, "Properly raised Invalid_Key_Error");
+        when others =>
+            Assert(False, "Raised the wrong exception");
     end Test_Get_No_Key;
 
+    procedure Test_Get_Space_Key(T: in out Test_Case'Class) is
+        Get_Command : Get;
+    begin
+        Get_Command := Create("Bad Key");
+        Assert(False, "Should have raised an exception here");
+    exception
+        when Invalid_Key_Error =>
+            Assert(True, "Properly raised Invalid_Key_Error");
+        when others =>
+            Assert(False, "Raised the wrong exception");
+    end Test_Get_Space_Key;
 end Test_Messages;
