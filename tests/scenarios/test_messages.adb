@@ -84,16 +84,19 @@ package body Test_Messages is
 
 
     procedure Test_Delete_Key(T: in out AUnit.Test_Cases.Test_Case'Class) is
+        Delete_Command : Delete := Create("Test_Key");
     begin
-        Assert(False, "not implemented");
+        Assert(Serialize(Delete_Command) = "delete Test_Key\r\n", "Incorrect delete command");
     end Test_Delete_Key;
 
     procedure Test_Delete_No_Key(T: in out AUnit.Test_Cases.Test_Case'Class) is
+        Delete_Command : Delete;
     begin
         Assert(False, "not implemented");
     end Test_Delete_No_Key;
 
     procedure Test_Delete_Space_Key(T: in out AUnit.Test_Cases.Test_Case'Class) is
+        Delete_Command : Delete := Create("Test Key");
     begin
         Assert(False, "not implemented");
     end Test_Delete_Space_Key;

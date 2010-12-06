@@ -57,4 +57,17 @@ package body Memcache.Messages is
     begin
         return "get " & Implode_Keys(M) & "\r\n";
     end Serialize;
+
+
+    function Create(Key : in String) return Delete is
+        M : Delete;
+    begin
+        M.Key := Bounded.To_Bounded_String(Key);
+        return M;
+    end;
+
+    function Serialize(M : in Delete) return String is
+    begin
+        return "delete " & Bounded.To_String(M.Key) & "\r\n";
+    end Serialize;
 end Memcache.Messages;

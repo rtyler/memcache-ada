@@ -33,6 +33,15 @@ package Memcache.Messages is
     function Serialize(M : in Get) return String;
 
 
+    --  Delete related types/functions
+    --
+    type Delete is new Message with record
+        Key : Bounded.Bounded_String;
+    end record;
+    function Create(Key : in String) return Delete;
+    function Serialize(M : in Delete) return String;
+
+
     --  Exceptions
     --
     Invalid_Key_Error : exception;
