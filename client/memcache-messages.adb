@@ -54,13 +54,16 @@ package body Memcache.Messages is
 
     function Create(Key : in String) return Delete is
         M : Delete;
+        Bounded_Key : Bounded.Bounded_String := Bounded.To_Bounded_String(Key);
     begin
-        M.Key := Bounded.To_Bounded_String(Key);
+        Validate(Bounded_Key);
+        M.Key := Bounded_Key;
         return M;
     end;
 
     function Serialize(M : in Delete) return String is
     begin
+        Validate(M.Key);
         return "delete " & Bounded.To_String(M.Key) & "\r\n";
     end Serialize;
 
@@ -71,19 +74,21 @@ package body Memcache.Messages is
         Length : Natural := Natural(Key_Vectors.Length(Keys));
     begin
         for Index in 0 .. (Length - 1) loop
-            declare
-                Bounded_Key : Bounded.Bounded_String := Keys.Element(Index);
-            begin
-                -- Cannot use empty keys
-                if Bounded.Length(Bounded_Key) = 0 then
-                    raise Invalid_Key_Error;
-                end if;
-
-                -- Canont use keys with spaces in them
-                if Bounded.Count(Source => Bounded_Key, Pattern => " ") /= 0 then
-                    raise Invalid_Key_Error;
-                end if;
-            end;
+            Validate(Keys.Element(Index));
         end loop;
-    end;
+    end Validate;
+
+
+    procedure Validate(Key : in Bounded.Bounded_String) is
+    begin
+        -- Cannot use empty keys
+        if Bounded.Length(Key) = 0 then
+            raise Invalid_Key_Error;
+        end if;
+
+        -- Canont use keys with spaces in them
+        if Bounded.Count(Source => Key, Pattern => " ") /= 0 then
+            raise Invalid_Key_Error;
+        end if;
+    end Validate;
 end Memcache.Messages;

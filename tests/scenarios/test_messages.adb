@@ -142,14 +142,26 @@ package body Test_Messages is
     procedure Test_Delete_No_Key(T: in out AUnit.Test_Cases.Test_Case'Class) is
         Delete_Command : Delete;
     begin
-        Assert(False, "not implemented");
+        Delete_Command := Create("");
+        Assert(False, "Should have raised an Invalid_Key_Error");
+    exception
+        when Invalid_Key_Error =>
+            Assert(True, "Properly raised Invalid_Key_Error");
+        when others =>
+            Assert(False, "Raised the wrong exception");
     end Test_Delete_No_Key;
 
 
     procedure Test_Delete_Space_Key(T: in out AUnit.Test_Cases.Test_Case'Class) is
-        Delete_Command : Delete := Create("Test Key");
+        Delete_Command : Delete;
     begin
-        Assert(False, "not implemented");
+        Delete_Command := Create("Bad Key");
+        Assert(False, "Should have raised an Invalid_Key_Error");
+    exception
+        when Invalid_Key_Error =>
+            Assert(True, "Properly raised Invalid_Key_Error");
+        when others =>
+            Assert(False, "Raised the wrong exception");
     end Test_Delete_Space_Key;
 
 end Test_Messages;

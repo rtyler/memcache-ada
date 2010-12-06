@@ -49,5 +49,6 @@ package Memcache.Messages is
 private
 
     procedure Validate(Keys : in Key_Vectors.Vector);
+    procedure Validate(Key : in Bounded.Bounded_String);
 
 end Memcache.Messages;
