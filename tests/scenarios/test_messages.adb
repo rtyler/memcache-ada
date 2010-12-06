@@ -10,18 +10,18 @@ package body Test_Messages is
     procedure Register_Tests(T: in out Messages_Test) is
         use AUnit.Test_Cases.Registration;
     begin
-        Register_Routine(T, Test_Stats'Access, "Test Stats Message");
-        Register_Routine(T, Test_Get_Single_Key'Access, "Test GETing a single key");
-        Register_Routine(T, Test_Get_Multiple_Keys'Access, "Test GETing multiple keys");
-        Register_Routine(T, Test_Get_No_Key'Access, "Test GET with no key (error)");
-        Register_Routine(T, Test_Get_Space_Key'Access, "Test GET with a key with a space (error)");
+        Register_Routine(T, Test_Stats'Access, "Stats Message");
+        Register_Routine(T, Test_Get_Single_Key'Access, "Get a single key");
+        Register_Routine(T, Test_Get_Multiple_Keys'Access, "Get multiple keys");
+        Register_Routine(T, Test_Get_No_Key'Access, "Get with no key (error)");
+        Register_Routine(T, Test_Get_Space_Key'Access, "Get with a key with a space (error)");
     end Register_Tests;
 
 
     function Name(T : Messages_Test) return AUnit.Message_String is
         pragma Unreferenced(T);
     begin
-        return AUnit.Format("Test_Messages");
+        return AUnit.Format("Test Memcache.Messages");
     end Name;
 
 

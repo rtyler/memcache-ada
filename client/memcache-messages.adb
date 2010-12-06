@@ -45,20 +45,14 @@ package body Memcache.Messages is
             Length : Natural := Natural(Key_Vectors.Length(M.Keys));
             Combined_Key : Unbounded_String;
         begin
-            if Length = 0 then
-                return "";
-            elsif Length = 1 then
-                return Bounded.To_String(M.Keys.Element(Index => 0));
-            else
-                for Index in 0 .. (Length - 1) loop
-                    Append(Source => Combined_Key, New_Item => Bounded.To_String(
-                                                    M.Keys.Element(Index => Index)));
-                    if Index /= (Length - 1) then
-                        Append(Source => Combined_Key, New_Item => " ");
-                    end if;
-                end loop;
-                return To_String(Combined_Key);
-            end if;
+            for Index in 0 .. (Length - 1) loop
+                Append(Source => Combined_Key, New_Item => Bounded.To_String(
+                                                M.Keys.Element(Index => Index)));
+                if Index /= (Length - 1) then
+                    Append(Source => Combined_Key, New_Item => " ");
+                end if;
+            end loop;
+            return To_String(Combined_Key);
         end Implode_Keys;
     begin
         return "get " & Implode_Keys(M) & "\r\n";
