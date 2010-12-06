@@ -42,7 +42,7 @@ package body Test_Messages is
 
     procedure Test_Get_Multiple_Keys(T: in out Test_Case'Class) is
     begin
-        null;
+        Assert(False, "Serialized get command with multiple keys is incorrect");
     end Test_Get_Multiple_Keys;
 
 end Test_Messages;
