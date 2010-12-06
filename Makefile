@@ -11,6 +11,7 @@ all:
 
 test: all
 	$(GPRBUILD) -p memcachetest.gpr
+	$(GPRBUILD) -p memcachetestxml.gpr
 	./$(TESTRUNNER)
 
 clean:
