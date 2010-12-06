@@ -29,6 +29,7 @@ package Memcache.Messages is
         Keys : Key_Vectors.Vector;
     end record;
     function Create(Key : in String) return Get;
+    function Create(Keys : in Key_Vectors.Vector) return Get;
     function Serialize(M : in Get) return String;
 
 

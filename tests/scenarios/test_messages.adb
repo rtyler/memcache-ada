@@ -43,8 +43,13 @@ package body Test_Messages is
     end Test_Get_Single_Key;
 
     procedure Test_Get_Multiple_Keys(T: in out Test_Case'Class) is
+        Keys : Key_Vectors.Vector;
+        Get_Command : Get;
     begin
-        Assert(False, "Serialized get command with multiple keys is incorrect");
+        Keys.Append(Bounded.To_Bounded_String("One"));
+        Keys.Append(Bounded.To_Bounded_String("Two"));
+        Get_Command := Create(Keys);
+        Assert(Serialize(Get_Command) = "get One Two\r\n", "Serialized get command with multiple keys is incorrect");
     end Test_Get_Multiple_Keys;
 
     procedure Test_Get_No_Key(T: in out Test_Case'Class) is

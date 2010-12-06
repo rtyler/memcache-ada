@@ -1,9 +1,6 @@
 
-with Ada.Calendar;
-with Ada.Text_IO;
-
-use Ada.Calendar;
-
+with Ada.Strings.Unbounded;
+use Ada.Strings.Unbounded;
 
 package body Memcache.Messages is
     function Create return Stats is
@@ -23,7 +20,7 @@ package body Memcache.Messages is
         Bounded_Key : Bounded.Bounded_String := Bounded.To_Bounded_String(Key);
     begin
         -- Cannot use empty keys
-        if Key'Length = 0 then
+        if Bounded.Length(Bounded_Key) = 0 then
             raise Invalid_Key_Error;
         end if;
 
@@ -36,16 +33,31 @@ package body Memcache.Messages is
         return M;
     end Create;
 
+    function Create(Keys : in Key_Vectors.Vector) return Get is
+        M : Get;
+    begin
+        M.Keys := Keys;
+        return  M;
+    end Create;
+
     function Serialize(M : in Get) return String is
         function Implode_Keys(M: in Get) return String is
             Length : Natural := Natural(Key_Vectors.Length(M.Keys));
+            Combined_Key : Unbounded_String;
         begin
             if Length = 0 then
                 return "";
             elsif Length = 1 then
                 return Bounded.To_String(M.Keys.Element(Index => 0));
             else
-                return "";
+                for Index in 0 .. (Length - 1) loop
+                    Append(Source => Combined_Key, New_Item => Bounded.To_String(
+                                                    M.Keys.Element(Index => Index)));
+                    if Index /= (Length - 1) then
+                        Append(Source => Combined_Key, New_Item => " ");
+                    end if;
+                end loop;
+                return To_String(Combined_Key);
             end if;
         end Implode_Keys;
     begin
