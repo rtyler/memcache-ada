@@ -1,14 +1,17 @@
 --
---  Primary package specification for the Ada memcached client library
+--  Primary Ada Memcached client specification
+--
+--  This package defines the core API accessible by
+--  users of this library
 --
 
 package Memcache is
-    type Client is private;
-    procedure Connect(M : in out Client; Host : in String; Port : in Natural);
+    type Connection is tagged private;
 
 private
-    type Client is record
-        Port : Natural := 11211;
-        Host : String (1 .. 256);
+
+    type Connection is tagged record
+        Port : Natural;
     end record;
+
 end Memcache;
