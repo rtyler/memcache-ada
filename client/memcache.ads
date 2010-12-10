@@ -5,6 +5,7 @@
 --  users of this library
 --
 
+with Ada.Calendar;
 with Ada.Containers.Vectors;
 with Ada.Strings.Bounded;
 with Ada.Strings.Unbounded;
@@ -18,6 +19,11 @@ package Memcache is
     use type Bounded.Bounded_String; -- Pull in operators for Bounded_String
     package Key_Vectors is new Vectors (Natural, Bounded.Bounded_String);
 
+    --
+    --  When passing an expiration, it must be within this range
+    --  otherwise the server will treat it as a unix timestamp
+    type Expiration is range 1 .. 60*60*24*30;
+
     type Connection is tagged private;
 
     function Get (This : in Connection; Key : in String)
@@ -25,14 +31,30 @@ package Memcache is
     function Gets (This : in Connection; Keys : in Key_Vectors.Vector)
                 return Boolean;
 
+
     function Delete (This : in Connection; Key : in String)
                 return Boolean;
+    function Delete (This : in Connection; Key : in String;
+                    Delayed : in Expiration) return Boolean;
+    function Delete (This : in Connection; Key : in String;
+                    Delayed : in Ada.Calendar.Time) return Boolean;
+    procedure Delete (This : in Connection; Key : in String);
+    procedure Delete (This : in Connection; Key : in String;
+                    Delayed : in Expiration);
+    procedure Delete (This : in Connection; Key : in String;
+                    Delayed : in Ada.Calendar.Time);
 
     function Set (This : in Connection; Key : in String;
                     Value : in String)
                 return Boolean;
 
+
+
+    --
+    --  Stats from the memcached server come back in a relatively
+    --  unstructured format, so this function will just dump to stdout
     procedure Dump_Stats (This : in Connection);
+
 
     --
     --  Memcache client exceptions
