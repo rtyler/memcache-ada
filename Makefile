@@ -9,6 +9,11 @@ all:
 	mkdir -p build
 	$(GPRBUILD) -p memcache.gpr
 
+syntax:
+	mkdir -p build
+	gnatmake -gnatc -gnat05 -P memcache.gpr
+	gnatmake -gnatc -gnat05 -P memcachetest.gpr
+
 test: all
 	$(GPRBUILD) -p memcachetest.gpr
 	$(GPRBUILD) -p memcachetestxml.gpr

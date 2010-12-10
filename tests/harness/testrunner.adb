@@ -9,10 +9,10 @@ use AUnit.Reporter.Text;
 with Suite;
 
 procedure TestRunner is
-    procedure Runner is new AUnit.Run.Test_Runner(Suite.Suite);
+    procedure Runner is new AUnit.Run.Test_Runner (Suite.Suite);
     Reporter : Text_Reporter;
 begin
-    Set_Use_ANSI_Colors(Engine => Reporter,
+    Set_Use_ANSI_Colors (Engine => Reporter,
             Value => True);
-    Runner(Reporter);
+    Runner (Reporter);
 end TestRunner;
