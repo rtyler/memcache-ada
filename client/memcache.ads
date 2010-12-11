@@ -101,6 +101,6 @@ private
     --      * Key length is less than or equal to 250 characters
     --      * Key length is greater than zero characters
     procedure Validate (Keys : in Key_Vectors.Vector);
-    procedure Validate (Key : in Bounded.Bounded_String);
+    procedure Validate (Key : in String);
 
 end Memcache;

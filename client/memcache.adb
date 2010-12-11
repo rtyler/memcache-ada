@@ -106,7 +106,7 @@ package body Memcache is
         raise Not_Implemented;
     end Validate;
 
-    procedure Validate (Key : in Bounded.Bounded_String) is
+    procedure Validate (Key : in String) is
     begin
         raise Not_Implemented;
     end Validate;
