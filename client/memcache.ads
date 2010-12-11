@@ -84,6 +84,7 @@ package Memcache is
     --
     --  Memcache client exceptions
     Invalid_Key_Error : exception;
+    Not_Implemented : exception;
 
 private
 
