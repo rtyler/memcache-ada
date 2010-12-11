@@ -1,6 +1,7 @@
 --
 --
-
+with Ada.Strings.Fixed;
+use Ada.Strings;
 
 package body Memcache is
     function Get (This : in Connection; Key : in String)
@@ -108,6 +109,16 @@ package body Memcache is
 
     procedure Validate (Key : in String) is
     begin
+        --  A key must be between 1 and 250 characters in length
+        if Key'Length = 0  or Key'Length > 250 then
+            raise Invalid_Key_Error;
+        end if;
+
+        --  A key with a space in it is also erroneous
+        if Fixed.Count (Source => Key, Pattern => " ") /= 0 then
+            raise Invalid_Key_Error;
+        end if;
+
         raise Not_Implemented;
     end Validate;
 

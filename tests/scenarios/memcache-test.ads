@@ -11,4 +11,8 @@ package Memcache.Test is
 
     procedure Test_Validate_Empty_Key (T :
                     in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Validate_Long_Key (T :
+                    in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Validate_Space_Key (T :
+                    in out AUnit.Test_Cases.Test_Case'Class);
 end Memcache.Test;
