@@ -7,11 +7,17 @@ package body Memcache.Test is
         use AUnit.Test_Cases.Registration;
     begin
         Register_Routine (T, Test_Validate_Empty_Key'Access,
-                        "Validate that an empty key is erroneous");
+                    "Validate that an empty key is erroneous");
         Register_Routine (T, Test_Validate_Long_Key'Access,
-                        "Validate that a 251+ character key is erroneous");
+                    "Validate that a 251+ character key is erroneous");
         Register_Routine (T, Test_Validate_Space_Key'Access,
-                        "Validate that a key with a space in it is erroneous");
+                    "Validate that a key with a space in it is erroneous");
+        Register_Routine (T, Test_Validate_Space_End_Key'Access,
+                    "Validate that a key with a trailing space is erroneous");
+        Register_Routine (T, Test_Validate_Tab_Key'Access,
+                    "Validate that a key with a \t is erroneous");
+        Register_Routine (T, Test_Validate_Newline_Key'Access,
+                    "Validate that a key with a \n is erroneous");
     end Register_Tests;
 
 
@@ -64,4 +70,37 @@ package body Memcache.Test is
         when Invalid_Key_Error =>
             Assert (True, "Properly raised Invalid_Key_Error");
     end Test_Validate_Space_Key;
+
+
+    procedure Test_Validate_Space_End_Key (T :
+                    in out AUnit.Test_Cases.Test_Case'Class) is
+    begin
+        Memcache.Validate ("BadKey ");
+        Assert (False, "Should have raised an Invalid_Key_Error");
+    exception
+        when Invalid_Key_Error =>
+            Assert (True, "Properly raised Invalid_Key_Error");
+    end Test_Validate_Space_End_Key;
+
+
+    procedure Test_Validate_Tab_Key (T :
+                    in out AUnit.Test_Cases.Test_Case'Class) is
+    begin
+        Memcache.Validate ("Bad" & Character'Val (9));
+        Assert (False, "Should have raised an Invalid_Key_Error");
+    exception
+        when Invalid_Key_Error =>
+            Assert (True, "Properly raised Invalid_Key_Error");
+    end Test_Validate_Tab_Key;
+
+
+    procedure Test_Validate_Newline_Key (T :
+                    in out AUnit.Test_Cases.Test_Case'Class) is
+    begin
+        Memcache.Validate ("Bad" & Character'Val (10));
+        Assert (False, "Should have raised an Invalid_Key_Error");
+    exception
+        when Invalid_Key_Error =>
+            Assert (True, "Properly raised Invalid_Key_Error");
+    end Test_Validate_Newline_Key;
 end Memcache.Test;

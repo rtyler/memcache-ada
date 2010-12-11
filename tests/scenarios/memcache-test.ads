@@ -15,4 +15,11 @@ package Memcache.Test is
                     in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Validate_Space_Key (T :
                     in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Validate_Space_End_Key (T :
+                    in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Validate_Tab_Key (T :
+                    in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Validate_Newline_Key (T :
+                    in out AUnit.Test_Cases.Test_Case'Class);
+
 end Memcache.Test;

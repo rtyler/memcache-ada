@@ -1,6 +1,8 @@
 --
 --
 with Ada.Strings.Fixed;
+with Ada.Characters.Handling;
+
 use Ada.Strings;
 
 package body Memcache is
@@ -114,10 +116,24 @@ package body Memcache is
             raise Invalid_Key_Error;
         end if;
 
-        --  A key with a space in it is also erroneous
-        if Fixed.Count (Source => Key, Pattern => " ") /= 0 then
-            raise Invalid_Key_Error;
-        end if;
+        --
+        --  It's unfortunate that string scanning is apprently necessary,
+        --  but we need to verify a few conditions for the string:
+        --      * No whitespace
+        --      * No control characters
+        for Index in Key'Range loop
+            declare
+                Key_Ch : Character := Key (Index);
+            begin
+                if Character'Pos (Key_Ch) = 32 then
+                    raise Invalid_Key_Error;
+                end if;
+
+                if Ada.Characters.Handling.Is_Control (Key_Ch) then
+                    raise Invalid_Key_Error;
+                end if;
+            end;
+        end loop;
 
         raise Not_Implemented;
     end Validate;
