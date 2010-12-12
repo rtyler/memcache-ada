@@ -134,9 +134,40 @@ package body Memcache is
                 end if;
             end;
         end loop;
-
-        raise Not_Implemented;
     end Validate;
 
+    function Generate_Delete (Key : in String;
+                                Delayed : in Expiration;
+                                No_Reply : in Boolean) return String is
+        Command : Unbounded.Unbounded_String;
+    begin
+        Validate (Key);
+
+        Command := Unbounded.To_Unbounded_String ("delete ");
+
+        if Delayed = 0 then
+            Unbounded.Append (Command,
+                Unbounded.To_Unbounded_String (Key));
+        else
+            Unbounded.Append (Command,
+                Unbounded.To_Unbounded_String (Key &
+                                Expiration'Image (Delayed)));
+        end if;
+
+        if No_Reply then
+            Unbounded.Append (Command,
+                Unbounded.To_Unbounded_String (" noreply"));
+        end if;
+
+        return Unbounded.To_String (Command) & "\r\n";
+    end Generate_Delete;
+
+    function Generate_Delete (Key : in String;
+                                Delayed : in Ada.Calendar.Time;
+                                No_Reply : in Boolean) return String is
+    begin
+        Validate (Key);
+        return  "";
+    end Generate_Delete;
 end Memcache;
 

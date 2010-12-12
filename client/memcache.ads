@@ -103,4 +103,15 @@ private
     procedure Validate (Keys : in Key_Vectors.Vector);
     procedure Validate (Key : in String);
 
+
+    --
+    --  Generation functions, used to generate the actual text
+    --  representations of commands to be sent over the wire to
+    --  the memcached server
+    function Generate_Delete (Key : in String;
+                                Delayed : in Expiration;
+                                No_Reply : in Boolean) return String;
+    function Generate_Delete (Key : in String;
+                                Delayed : in Ada.Calendar.Time;
+                                No_Reply : in Boolean) return String;
 end Memcache;
