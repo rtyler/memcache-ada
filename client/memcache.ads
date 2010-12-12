@@ -10,6 +10,7 @@ with Ada.Containers.Vectors;
 with Ada.Streams;
 with Ada.Strings.Bounded;
 with Ada.Strings.Unbounded;
+with GNAT.Sockets;
 
 use Ada.Containers;
 use Ada.Strings.Bounded;
@@ -79,6 +80,8 @@ package Memcache is
     --  Stats from the memcached server come back in a relatively
     --  unstructured format, so this function will just dump to stdout
     procedure Dump_Stats (This : in Connection);
+
+    function Create (Host : in String; Port : in Natural) return Connection;
 
 
     --

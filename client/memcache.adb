@@ -6,6 +6,15 @@ with Ada.Characters.Handling;
 use Ada.Strings;
 
 package body Memcache is
+    function Create (Host : in String; Port : in Natural)
+                return Connection is
+        C : Connection;
+    begin
+        C.Host := Unbounded.To_Unbounded_String (Host);
+        C.Port := Port;
+        return C;
+    end Create;
+
     function Get (This : in Connection; Key : in String)
                 return Unbounded.Unbounded_String is
     begin
