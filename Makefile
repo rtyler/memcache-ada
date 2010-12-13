@@ -20,8 +20,7 @@ test: syntax
 	./$(TESTRUNNER)
 
 inttest: syntax lib test
-	(cd integrationtests/deleter && $(GPRBUILD) -p deleter.gpr && echo && ./deleter)
-
+	(cd integrationtests/deleter && $(GPRBUILD) -p deleter.gpr && sh ./deleter.sh)
 
 clean:
 	$(GPRCLEAN) memcache.gpr
