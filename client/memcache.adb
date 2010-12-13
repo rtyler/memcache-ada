@@ -1,19 +1,43 @@
 --
 --
-with Ada.Strings.Fixed;
 with Ada.Characters.Handling;
+with Ada.Streams.Stream_IO;
+with Ada.Strings.Fixed;
+with Ada.Text_IO;
+with GNAT.Sockets;
 
 use Ada.Strings;
+use type Ada.Streams.Stream_Element_Count;
 
 package body Memcache is
-    function Create (Host : in String; Port : in Natural)
+    function Create (Host : in String; Port : in GNAT.Sockets.Port_Type)
                 return Connection is
         C : Connection;
     begin
-        C.Host := Unbounded.To_Unbounded_String (Host);
-        C.Port := Port;
+        C.Address.Addr := GNAT.Sockets.Inet_Addr (Host);
+        C.Address.Port := Port;
         return C;
     end Create;
+
+    procedure Connect (Conn : in out Connection) is
+        use GNAT.Sockets;
+    begin
+        if Conn.Connected then
+            return;
+        end if;
+
+        Initialize;
+        Create_Socket (Conn.Sock);
+        Set_Socket_Option (Conn.Sock, Socket_Level, (Reuse_Address, True));
+        Connect_Socket (Conn.Sock, Conn.Address);
+        Conn.Connected := True;
+    end Connect;
+
+    procedure Disconnect (Conn : in out Connection) is
+    begin
+        GNAT.Sockets.Close_Socket (Conn.Sock);
+        Conn.Connected := False;
+    end Disconnect;
 
     function Get (This : in Connection; Key : in String)
                 return Unbounded.Unbounded_String is

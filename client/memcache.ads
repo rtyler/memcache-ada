@@ -81,7 +81,8 @@ package Memcache is
     --  unstructured format, so this function will just dump to stdout
     procedure Dump_Stats (This : in Connection);
 
-    function Create (Host : in String; Port : in Natural) return Connection;
+    function Create (Host : in String; Port : in GNAT.Sockets.Port_Type)
+                return Connection;
 
 
     --
@@ -92,8 +93,9 @@ package Memcache is
 private
 
     type Connection is tagged record
-        Host : Unbounded.Unbounded_String;
-        Port : Natural;
+        Sock : GNAT.Sockets.Socket_Type;
+        Address : GNAT.Sockets.Sock_Addr_Type;
+        Connected : Boolean := False;
     end record;
 
 
@@ -117,4 +119,8 @@ private
     function Generate_Delete (Key : in String;
                                 Delayed : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String;
+
+
+    procedure Connect (Conn : in out Connection);
+    procedure Disconnect (Conn : in out Connection);
 end Memcache;
