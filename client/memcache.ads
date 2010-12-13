@@ -25,6 +25,7 @@ package Memcache is
     --  When passing an expiration, it must be within this range
     --  otherwise the server will treat it as a unix timestamp
     type Expiration is range 0 .. 60*60*24*30;
+    subtype Port_Type is GNAT.Sockets.Port_Type;
     type Flags is mod 2 ** 16;
 
     type Connection is tagged private;
@@ -81,9 +82,10 @@ package Memcache is
     --  unstructured format, so this function will just dump to stdout
     procedure Dump_Stats (This : in Connection);
 
-    function Create (Host : in String; Port : in GNAT.Sockets.Port_Type)
+    function Create (Host : in String; Port : in Port_Type)
                 return Connection;
 
+    procedure Disconnect (Conn : in out Connection);
 
     --
     --  Memcache client exceptions
@@ -122,5 +124,4 @@ private
 
 
     procedure Connect (Conn : in out Connection);
-    procedure Disconnect (Conn : in out Connection);
 end Memcache;

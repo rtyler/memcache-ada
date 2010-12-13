@@ -10,7 +10,7 @@ use Ada.Strings;
 use type Ada.Streams.Stream_Element_Count;
 
 package body Memcache is
-    function Create (Host : in String; Port : in GNAT.Sockets.Port_Type)
+    function Create (Host : in String; Port : in Port_Type)
                 return Connection is
         C : Connection;
     begin
@@ -87,7 +87,7 @@ package body Memcache is
 
     procedure Delete (This : in out Connection; Key : in String;
                     Delayed : in Expiration := 0) is
-        -- Sending no-reply for now
+        --  Sending no-reply for now
         Command : String := Generate_Delete (Key, Delayed, True);
         Channel : GNAT.Sockets.Stream_Access;
     begin
