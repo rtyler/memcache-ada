@@ -168,7 +168,7 @@ package body Memcache is
                 Unbounded.To_Unbounded_String (" noreply"));
         end if;
 
-        return Unbounded.To_String (Command) & "\r\n";
+        return Unbounded.To_String (Command) & ASCII.CR & ASCII.LF;
     end Generate_Delete;
 
     function Generate_Delete (Key : in String;

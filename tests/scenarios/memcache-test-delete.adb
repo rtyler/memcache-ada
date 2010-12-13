@@ -27,32 +27,35 @@ package body Memcache.Test.Delete is
     procedure Test_Gen_Delete (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
         Command : String := Memcache.Generate_Delete ("GoodKey", 0, False);
+        Expected : String := "delete GoodKey" & ASCII.CR & ASCII.LF;
     begin
-        Assert (Command = "delete GoodKey\r\n", "Bad command string");
+        Assert (Command = Expected, "Bad command string");
     end Test_Gen_Delete;
 
 
     procedure Test_Gen_Delete_Delayed (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
         Command : String := Memcache.Generate_Delete ("GoodKey", 10, False);
+        Expected : String := "delete GoodKey 10" & ASCII.CR & ASCII.LF;
     begin
-        Assert (Command = "delete GoodKey 10\r\n", "Bad command string");
+        Assert (Command = Expected, "Bad command string");
     end Test_Gen_Delete_Delayed;
 
 
     procedure Test_Gen_Delete_No_Reply (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
         Command : String := Memcache.Generate_Delete ("GoodKey", 0, True);
+        Expected : String := "delete GoodKey noreply" & ASCII.CR & ASCII.LF;
     begin
-        Assert (Command = "delete GoodKey noreply\r\n", "Bad command string");
+        Assert (Command = Expected, "Bad command string");
     end Test_Gen_Delete_No_Reply;
 
 
     procedure Test_Gen_Delete_Delayed_No_Reply (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
         Command : String := Memcache.Generate_Delete ("GoodKey", 10, True);
+        Expected : String := "delete GoodKey 10 noreply" & ASCII.CR & ASCII.LF;
     begin
-        Assert (Command = "delete GoodKey 10 noreply\r\n",
-            "Bad command string");
+        Assert (Command = Expected, "Bad command string");
     end Test_Gen_Delete_Delayed_No_Reply;
 end Memcache.Test.Delete;
