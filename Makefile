@@ -20,11 +20,12 @@ test: syntax
 	./$(TESTRUNNER)
 
 inttest: syntax lib test
-	(cd integrationtests/deleter && $(GPRBUILD) -p deleter.gpr && sh ./deleter.sh)
+	(cd integrationtests && python buildtests.py)
+	(cd integrationtests && python runtests.py)
 
 clean:
 	$(GPRCLEAN) memcache.gpr
 	$(GPRCLEAN) memcachetest.gpr
-	(cd integrationtests/deleter && $(GPRCLEAN) deleter.gpr)
+	(cd integrationtests && python clean.py)
 	rm -rf build
 	rm -f $(TESTRUNNER)
