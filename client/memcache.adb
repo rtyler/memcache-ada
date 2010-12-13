@@ -85,13 +85,18 @@ package body Memcache is
         return False;
     end Delete;
 
-    procedure Delete (This : in Connection; Key : in String;
+    procedure Delete (This : in out Connection; Key : in String;
                     Delayed : in Expiration := 0) is
+        -- Sending no-reply for now
+        Command : String := Generate_Delete (Key, Delayed, True);
+        Channel : GNAT.Sockets.Stream_Access;
     begin
-        raise Not_Implemented;
+        Connect (This);
+        Channel := GNAT.Sockets.Stream (This.Sock);
+        String'Write (Channel, Command);
     end Delete;
 
-    procedure Delete (This : in Connection; Key : in String;
+    procedure Delete (This : in out Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time) is
     begin
         raise Not_Implemented;

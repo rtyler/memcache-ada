@@ -58,10 +58,10 @@ package Memcache is
                     Delayed : in Ada.Calendar.Time)
                 return Boolean;
 
-    procedure Delete (This : in Connection; Key : in String;
+    procedure Delete (This : in out Connection; Key : in String;
                     Delayed : in Expiration := 0);
 
-    procedure Delete (This : in Connection; Key : in String;
+    procedure Delete (This : in out Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time);
 
 
