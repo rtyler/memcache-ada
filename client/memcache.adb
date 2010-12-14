@@ -88,12 +88,15 @@ package body Memcache is
     procedure Delete (This : in out Connection; Key : in String;
                     Delayed : in Expiration := 0) is
         --  Sending no-reply for now
-        Command : String := Generate_Delete (Key, Delayed, True);
-        Channel : GNAT.Sockets.Stream_Access;
+        Command : String := Generate_Delete (Key, Delayed, False);
     begin
-        Connect (This);
-        Channel := GNAT.Sockets.Stream (This.Sock);
-        String'Write (Channel, Command);
+        Write_Command (Conn => This, Command => Command);
+        declare
+            Response : String := Read_Response (This);
+        begin
+            --  TODO: Add proper response checking here
+            null;
+        end;
     end Delete;
 
     procedure Delete (This : in out Connection; Key : in String;
@@ -207,5 +210,36 @@ package body Memcache is
         Validate (Key);
         return  "";
     end Generate_Delete;
+
+    procedure Write_Command (Conn : in out Connection; Command : in String) is
+        use GNAT.Sockets;
+        use Ada.Streams;
+        Channel : Stream_Access; -- From GNAT.Sockets
+    begin
+        Connect (Conn);
+        Channel := Stream (Conn.Sock);
+        String'Write (Channel, Command);
+    end Write_Command;
+
+    function Read_Response (Conn : in Connection) return String is
+        use GNAT.Sockets;
+        use Ada.Streams;
+        Response : Unbounded.Unbounded_String;
+        Channel : Stream_Access; -- From GNAT.Sockets
+        Offset : Stream_Element_Count;
+        Data   : Stream_Element_Array (1 .. 1);
+    begin
+        Channel := Stream (Conn.Sock);
+        loop
+            Read (Channel.All, Data, Offset);
+            declare
+                Char : Character := Character'Val (Data (1));
+            begin
+                Unbounded.Append (Response, Char);
+                exit when Char = ASCII.LF;
+            end;
+        end loop;
+        return Unbounded.To_String (Response);
+    end Read_Response;
 end Memcache;
 

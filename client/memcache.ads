@@ -124,4 +124,8 @@ private
 
 
     procedure Connect (Conn : in out Connection);
+
+    procedure Write_Command (Conn : in out Connection; Command : in String);
+    function Read_Response (Conn : in Connection) return String;
+
 end Memcache;
