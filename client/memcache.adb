@@ -72,9 +72,20 @@ package body Memcache is
     function Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0)
                 return Boolean is
+        Command : String := Generate_Delete (Key, Delayed, False);
     begin
-        raise Not_Implemented;
-        return False;
+        Write_Command (Conn => This, Command => Command);
+        declare
+            Response : String := Read_Response (This);
+        begin
+            if Response = "DELETED" then
+                return True;
+            elsif Response = "NOT_FOUND" then
+                return False;
+            else
+                raise Unexpected_Response;
+            end if;
+        end;
     end Delete;
 
     function Delete (This : in Connection; Key : in String;
@@ -85,21 +96,14 @@ package body Memcache is
         return False;
     end Delete;
 
-    procedure Delete (This : in out Connection; Key : in String;
+    procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0) is
-        --  Sending no-reply for now
-        Command : String := Generate_Delete (Key, Delayed, False);
+        Unused : Boolean := Delete (This, Key, Delayed);
     begin
-        Write_Command (Conn => This, Command => Command);
-        declare
-            Response : String := Read_Response (This);
-        begin
-            --  TODO: Add proper response checking here
-            null;
-        end;
+        null;
     end Delete;
 
-    procedure Delete (This : in out Connection; Key : in String;
+    procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time) is
     begin
         raise Not_Implemented;
@@ -211,14 +215,18 @@ package body Memcache is
         return  "";
     end Generate_Delete;
 
-    procedure Write_Command (Conn : in out Connection; Command : in String) is
+    procedure Write_Command (Conn : in Connection; Command : in String) is
         use GNAT.Sockets;
         use Ada.Streams;
         Channel : Stream_Access; -- From GNAT.Sockets
     begin
-        Connect (Conn);
+        if Conn.Connected = False then
+            raise Invalid_Connection;
+        end if;
+
         Channel := Stream (Conn.Sock);
         String'Write (Channel, Command);
+
     end Write_Command;
 
     function Read_Response (Conn : in Connection) return String is
@@ -229,6 +237,7 @@ package body Memcache is
         Offset : Stream_Element_Count;
         Data   : Stream_Element_Array (1 .. 1);
         Found_CR : Boolean := False;
+        Should_Trim : Boolean := False;
     begin
         Channel := Stream (Conn.Sock);
         loop
@@ -248,11 +257,22 @@ package body Memcache is
                 --  `ASCII.LF` then we should exit, having received a full
                 --  response from the server
                 if Found_CR and Char = ASCII.LF then
+                    Should_Trim := True;
                     exit;
                 end if;
             end;
         end loop;
-        return Unbounded.To_String (Response);
+
+        declare
+            Length : Natural := Unbounded.Length (Response);
+        begin
+            if Should_Trim then
+                --  Return the string with the CR + LF sliced off the end
+                return Unbounded.Slice (Response, 1, Length - 2);
+            else
+                return Unbounded.To_String (Response);
+            end if;
+        end;
     end Read_Response;
 end Memcache;
 
