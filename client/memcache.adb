@@ -228,6 +228,7 @@ package body Memcache is
         Channel : Stream_Access; -- From GNAT.Sockets
         Offset : Stream_Element_Count;
         Data   : Stream_Element_Array (1 .. 1);
+        Found_CR : Boolean := False;
     begin
         Channel := Stream (Conn.Sock);
         loop
@@ -236,7 +237,19 @@ package body Memcache is
                 Char : Character := Character'Val (Data (1));
             begin
                 Unbounded.Append (Response, Char);
-                exit when Char = ASCII.LF;
+
+                if Char = ASCII.CR then
+                    Found_CR := True;
+                elsif Found_CR and Char /= ASCII.LF then
+                    Found_CR := False;
+                end if;
+
+                --  If the last two characters have been `ASCII.CR` and
+                --  `ASCII.LF` then we should exit, having received a full
+                --  response from the server
+                if Found_CR and Char = ASCII.LF then
+                    exit;
+                end if;
             end;
         end loop;
         return Unbounded.To_String (Response);
