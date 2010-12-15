@@ -12,6 +12,7 @@ procedure Deleter is
             Memcache.Create (Host => "127.0.0.1",
                             Port => Memcache.Port_Type'Value (Port));
 begin
+    C.Connect;
     C.Delete ("deleter");
     C.Disconnect;
 end Deleter;

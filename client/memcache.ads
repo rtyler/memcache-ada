@@ -85,11 +85,14 @@ package Memcache is
     function Create (Host : in String; Port : in Port_Type)
                 return Connection;
 
+    procedure Connect (Conn : in out Connection);
     procedure Disconnect (Conn : in out Connection);
 
     --
     --  Memcache client exceptions
     Invalid_Key_Error : exception;
+    Unexpected_Response : exception;
+    Invalid_Connection : exception;
     Not_Implemented : exception;
 
 private
@@ -123,9 +126,7 @@ private
                                 No_Reply : in Boolean) return String;
 
 
-    procedure Connect (Conn : in out Connection);
-
-    procedure Write_Command (Conn : in out Connection; Command : in String);
+    procedure Write_Command (Conn : in Connection; Command : in String);
     function Read_Response (Conn : in Connection) return String;
 
 end Memcache;
