@@ -1,6 +1,7 @@
 with Memcache;
 with Memcache.Test;
 with Memcache.Test.Delete;
+with Memcache.Test.Incr;
 
 package body Suite is
     use AUnit.Test_Suites;
@@ -9,6 +10,7 @@ package body Suite is
     begin
         Result.Add_Test (new Memcache.Test.Client_Test);
         Result.Add_Test (new Memcache.Test.Delete.Delete_Test);
+        Result.Add_Test (new Memcache.Test.Incr.Incr_Test);
         return Result;
     end Suite;
 end Suite;
