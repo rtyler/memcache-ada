@@ -32,8 +32,6 @@ package Memcache is
 
     function Get (This : in Connection; Key : in String)
                 return Unbounded.Unbounded_String;
-  --  function Gets (This : in Connection; Keys : in Key_Vectors.Vector)
-  --              return Boolean;
 
 
     function Set (This : in Connection;
@@ -50,7 +48,9 @@ package Memcache is
                     Value : in String)
                 return Boolean;
 
-
+    --
+    --  Functions/procedures implementing the "delete" memcached
+    --  command
     function Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0)
                 return Boolean;
@@ -64,19 +64,34 @@ package Memcache is
 
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time);
+    --
+    --
 
 
+    --
+    --  Functions/procedures implementing the "incr" memcached
+    --  command
     function Increment (This : in Connection; Key : in String;
                     Value : in Natural)
                 return Boolean;
     procedure Increment (This : in Connection; Key : in String;
                     Value : in Natural);
+    --
+    --
 
+
+    --
+    --  Functions/procedures implementing the "decr" memcached
+    --  command
     function Decrement (This : in Connection; Key : in String;
                     Value : in Natural)
                 return Boolean;
     procedure Decrement (This : in Connection; Key : in String;
                     Value : in Natural);
+    --
+    --
+
+
     --
     --  Stats from the memcached server come back in a relatively
     --  unstructured format, so this function will just dump to stdout
