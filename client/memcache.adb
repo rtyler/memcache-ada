@@ -141,8 +141,16 @@ package body Memcache is
     --  Stats from the memcached server come back in a relatively
     --  unstructured format, so this function will just dump to stdout
     procedure Dump_Stats (This : in Connection) is
+        Command : String := Append_CRLF ("stats");
     begin
-        raise Not_Implemented;
+        Write_Command (Conn => This, Command => Command);
+        declare
+            Terminator : String :=  Append_CRLF ("END");
+            Response : String := Read_Until (This, Terminator);
+        begin
+            Ada.Text_IO.Put_Line ("Stats response:");
+            Ada.Text_IO.Put_Line (Response);
+        end;
     end Dump_Stats;
 
 
