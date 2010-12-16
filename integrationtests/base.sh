@@ -13,7 +13,7 @@ function killcache() {
 }
 
 function runcache() {
-    memcached -p ${PORT} -U 0 -m 1 -vv &
+    memcached -p ${PORT} -U 0 -m 1 -v &
     export CACHE_PID=$!
     echo ">> memcached started with pid ${CACHE_PID}";
     echo ">> Waiting for memcached to come online on port ${PORT}";
