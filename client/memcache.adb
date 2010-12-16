@@ -229,50 +229,72 @@ package body Memcache is
 
     end Write_Command;
 
-    function Read_Response (Conn : in Connection) return String is
+    function Read_Until (Conn : in Connection; Terminator : in String;
+                    Trim_CRLF : in Boolean := True)
+                return String is
         use GNAT.Sockets;
         use Ada.Streams;
-        Response : Unbounded.Unbounded_String;
         Channel : Stream_Access; -- From GNAT.Sockets
+        Response : Unbounded.Unbounded_String;
         Offset : Stream_Element_Count;
         Data   : Stream_Element_Array (1 .. 1);
-        Found_CR : Boolean := False;
-        Should_Trim : Boolean := False;
+        R_Length : Natural;
+        Read_Char : Character;
+
+        function Should_Exit (Buffer : in Unbounded.Unbounded_String;
+                        Terminator : in String) return Boolean is
+            R_Length : Natural := Unbounded.Length (Buffer);
+            T_Length : Natural := Terminator'Length;
+            R_Last_Char : Character := Unbounded.Element (Buffer, R_Length);
+            T_Last_Char : Character := Terminator (Terminator'Last);
+        begin
+            if R_Length < T_Length then
+                return False;
+            end if;
+
+            --  Only check the last N characters if the current
+            --  character matches the last one in the Terminator
+            if R_Last_Char /= T_Last_Char then
+                return False;
+            end if;
+
+            declare
+                Sub : String := Unbounded.Slice
+                    (Buffer, R_Length - (T_Length - 1), R_Length);
+            begin
+                if Terminator = Sub then
+                    return True;
+                end if;
+            end;
+            return False;
+        end Should_Exit;
+
     begin
         Channel := Stream (Conn.Sock);
         loop
             Read (Channel.All, Data, Offset);
-            declare
-                Char : Character := Character'Val (Data (1));
-            begin
-                Unbounded.Append (Response, Char);
+            Read_Char := Character'Val (Data (1));
+            Unbounded.Append (Response, Read_Char);
 
-                if Char = ASCII.CR then
-                    Found_CR := True;
-                elsif Found_CR and Char /= ASCII.LF then
-                    Found_CR := False;
-                end if;
-
-                --  If the last two characters have been `ASCII.CR` and
-                --  `ASCII.LF` then we should exit, having received a full
-                --  response from the server
-                if Found_CR and Char = ASCII.LF then
-                    Should_Trim := True;
-                    exit;
-                end if;
-            end;
+            if Should_Exit (Response, Terminator) then
+                exit;
+            end if;
         end loop;
 
-        declare
-            Length : Natural := Unbounded.Length (Response);
-        begin
-            if Should_Trim then
-                --  Return the string with the CR + LF sliced off the end
-                return Unbounded.Slice (Response, 1, Length - 2);
-            else
-                return Unbounded.To_String (Response);
-            end if;
-        end;
+        R_Length := Unbounded.Length (Response);
+
+        if Trim_CRLF then
+            --  Return the string with the CR + LF sliced off the end
+            return Unbounded.Slice (Response, 1, R_Length - 2);
+        else
+            return Unbounded.To_String (Response);
+        end if;
+    end Read_Until;
+
+    function Read_Response (Conn : in Connection) return String is
+        End_of_Line : String := Append_CRLF ("");
+    begin
+        return Read_Until (Conn, End_of_Line);
     end Read_Response;
 
     function Append_CRLF (Input : in String) return String is
