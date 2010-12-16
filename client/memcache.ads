@@ -129,4 +129,6 @@ private
     procedure Write_Command (Conn : in Connection; Command : in String);
     function Read_Response (Conn : in Connection) return String;
 
+    function Append_CRLF (Input : in String) return String;
+
 end Memcache;

@@ -274,5 +274,10 @@ package body Memcache is
             end if;
         end;
     end Read_Response;
+
+    function Append_CRLF (Input : in String) return String is
+    begin
+        return Input & ASCII.CR & ASCII.LF;
+    end Append_CRLF;
 end Memcache;
 
