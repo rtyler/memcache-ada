@@ -36,16 +36,22 @@ package Memcache is
 
     function Set (This : in Connection;
                     Key : in String;
+                    Value : in String;
                     Set_Flags : in Flags := 0;
-                    Expire : in Expiration := 0;
-                    Value : in String)
+                    Expire : in Expiration := 0)
                 return Boolean;
+
+    procedure Set (This : in Connection;
+                    Key : in String;
+                    Value : in String;
+                    Set_Flags : in Flags := 0;
+                    Expire : in Expiration := 0);
 
     function Set (This : in Connection;
                     Key : in String;
+                    Value : in String;
                     Set_Flags : in Flags := 0;
-                    Expire : in Ada.Calendar.Time;
-                    Value : in String)
+                    Expire : in Ada.Calendar.Time)
                 return Boolean;
 
     --
@@ -146,6 +152,10 @@ private
     function Generate_Decr (Key : in String; Value : in Natural;
                                 No_Reply : in Boolean) return String;
 
+    function Generate_Set (Key : in String; Value : in String;
+                                Set_Flags : in Flags;
+                                Expire : in Expiration;
+                                No_Reply : in Boolean) return String;
 
     procedure Write_Command (Conn : in Connection; Command : in String);
     function Read_Until (Conn : in Connection; Terminator : in String;

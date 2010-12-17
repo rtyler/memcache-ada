@@ -48,20 +48,39 @@ package body Memcache is
 
     function Set (This : in Connection;
                     Key : in String;
+                    Value : in String;
                     Set_Flags : in Flags := 0;
-                    Expire : in Expiration := 0;
-                    Value : in String)
+                    Expire : in Expiration := 0)
                 return Boolean is
+        Command : String := Generate_Set (Key, Value, Set_Flags, Expire, False);
     begin
-        raise Not_Implemented;
-        return False;
+        Write_Command (Conn => This, Command => Command);
+        declare
+            Response : String := Read_Response (This);
+        begin
+            if Response = "STORED" then
+                return True;
+            end if;
+            return False;
+        end;
+    end Set;
+
+    procedure Set (This : in Connection;
+                    Key : in String;
+                    Value : in String;
+                    Set_Flags : in Flags := 0;
+                    Expire : in Expiration := 0) is
+        Unused : Boolean := Set (This, Key, Value,
+                        Set_Flags, Expire);
+    begin
+        null;
     end Set;
 
     function Set (This : in Connection;
                     Key : in String;
+                    Value : in String;
                     Set_Flags : in Flags := 0;
-                    Expire : in Ada.Calendar.Time;
-                    Value : in String)
+                    Expire : in Ada.Calendar.Time)
                 return Boolean is
     begin
         raise Not_Implemented;
@@ -286,6 +305,32 @@ package body Memcache is
 
         return Unbounded.To_String (Command) & ASCII.CR & ASCII.LF;
     end Generate_Decr;
+
+
+    function Generate_Set (Key : in String; Value : in String;
+                                Set_Flags : in Flags;
+                                Expire : in Expiration;
+                                No_Reply : in Boolean) return String is
+        Command : Unbounded.Unbounded_String;
+    begin
+--<command name> <key> <flags> <exptime> <bytes> [noreply]\r\n
+        Validate (Key);
+
+        Command := Unbounded.To_Unbounded_String ("set " &
+                        Key &
+                        Flags'Image (Set_Flags) &
+                        Expiration'Image (Expire) &
+                        Natural'Image (Value'Length) &
+                        ASCII.CR & ASCII.LF);
+        Unbounded.Append (Command, Append_CRLF (Value));
+
+        if No_Reply then
+            Unbounded.Append (Command,
+                Unbounded.To_Unbounded_String (" noreply"));
+        end if;
+
+        return Unbounded.To_String (Command);
+    end Generate_Set;
 
 
     procedure Write_Command (Conn : in Connection; Command : in String) is
