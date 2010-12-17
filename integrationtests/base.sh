@@ -7,7 +7,6 @@ function pyexec() {
 }
 
 function killcache() {
-    echo
     echo ">> Killing cache at pid ${CACHE_PID}"
     kill ${CACHE_PID}
 }

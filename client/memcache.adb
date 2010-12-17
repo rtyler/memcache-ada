@@ -113,15 +113,24 @@ package body Memcache is
     function Increment (This : in Connection; Key : in String;
                     Value : in Natural)
                 return Boolean is
+        Command : String := Generate_Incr (Key, Value, False);
     begin
-        raise Not_Implemented;
-        return False;
+        Write_Command (Conn => This, Command => Command);
+        declare
+            Response : String := Read_Response (This);
+        begin
+            if Response = "NOT_FOUND" then
+                return False;
+            end if;
+        end;
+        return True;
     end Increment;
 
     procedure Increment (This : in Connection; Key : in String;
                     Value : in Natural) is
+        Unused : Boolean := Increment (This, Key, Value);
     begin
-        raise Not_Implemented;
+        null;
     end Increment;
 
     function Decrement (This : in Connection; Key : in String;
