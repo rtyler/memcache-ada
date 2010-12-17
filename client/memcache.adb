@@ -223,6 +223,28 @@ package body Memcache is
         return  "";
     end Generate_Delete;
 
+    function Generate_Incr (Key : in String;
+                                Value : in Natural;
+                                No_Reply : in Boolean) return String is
+        Command : Unbounded.Unbounded_String;
+    begin
+        Validate (Key);
+
+        --  NOTE: Integer'Image leaves a preceding space *or* a minus
+        --  sign, since this is a Natural type, we won't have a preceding
+        --  minus sign so we'll use that preceding space for formatting the
+        --  command
+        Command := Unbounded.To_Unbounded_String ("incr " &
+                    Key & Natural'Image (Value));
+
+        if No_Reply then
+            Unbounded.Append (Command,
+                Unbounded.To_Unbounded_String (" noreply"));
+        end if;
+
+        return Unbounded.To_String (Command) & ASCII.CR & ASCII.LF;
+    end Generate_Incr;
+
     procedure Write_Command (Conn : in Connection; Command : in String) is
         use GNAT.Sockets;
         use Ada.Streams;

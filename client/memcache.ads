@@ -140,6 +140,9 @@ private
                                 Delayed : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String;
 
+    function Generate_Incr (Key : in String; Value : in Natural;
+                                No_Reply : in Boolean) return String;
+
 
     procedure Write_Command (Conn : in Connection; Command : in String);
     function Read_Until (Conn : in Connection; Terminator : in String;

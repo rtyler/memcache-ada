@@ -10,5 +10,9 @@ package Memcache.Test.Incr is
 
     procedure Test_Gen_Incr (T :
                       in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Gen_Incr_No_Reply (T :
+                      in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Gen_Incr_Bad_Key (T :
+                      in out AUnit.Test_Cases.Test_Case'Class);
 end Memcache.Test.Incr;
 
