@@ -52,7 +52,8 @@ package body Memcache is
                     Set_Flags : in Flags := 0;
                     Expire : in Expiration := 0)
                 return Boolean is
-        Command : String := Generate_Set (Key, Value, Set_Flags, Expire, False);
+        Command : String := Generate_Set (Key, Value,
+                                Set_Flags, Expire, False);
     begin
         Write_Command (Conn => This, Command => Command);
         declare
