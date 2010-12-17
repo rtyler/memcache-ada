@@ -13,6 +13,6 @@ procedure Incrementer is
                             Port => Memcache.Port_Type'Value (Port));
 begin
     C.Connect;
-    C.increment ("incrementer", 1);
+    C.Increment ("incrementer", 1);
     C.Disconnect;
 end Incrementer;
