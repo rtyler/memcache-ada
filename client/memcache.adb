@@ -136,15 +136,24 @@ package body Memcache is
     function Decrement (This : in Connection; Key : in String;
                     Value : in Natural)
                 return Boolean is
+        Command : String := Generate_Decr (Key, Value, False);
     begin
-        raise Not_Implemented;
-        return False;
+        Write_Command (Conn => This, Command => Command);
+        declare
+            Response : String := Read_Response (This);
+        begin
+            if Response = "NOT_FOUND" then
+                return False;
+            end if;
+        end;
+        return True;
     end Decrement;
 
     procedure Decrement (This : in Connection; Key : in String;
                     Value : in Natural) is
+        Unused : Boolean := Decrement (This, Key, Value);
     begin
-        raise Not_Implemented;
+        null;
     end Decrement;
     --
     --  Stats from the memcached server come back in a relatively
@@ -232,6 +241,7 @@ package body Memcache is
         return  "";
     end Generate_Delete;
 
+
     function Generate_Incr (Key : in String;
                                 Value : in Natural;
                                 No_Reply : in Boolean) return String is
@@ -253,6 +263,30 @@ package body Memcache is
 
         return Unbounded.To_String (Command) & ASCII.CR & ASCII.LF;
     end Generate_Incr;
+
+
+    function Generate_Decr (Key : in String;
+                                Value : in Natural;
+                                No_Reply : in Boolean) return String is
+        Command : Unbounded.Unbounded_String;
+    begin
+        Validate (Key);
+
+        --  NOTE: Integer'Image leaves a preceding space *or* a minus
+        --  sign, since this is a Natural type, we won't have a preceding
+        --  minus sign so we'll use that preceding space for formatting the
+        --  command
+        Command := Unbounded.To_Unbounded_String ("decr " &
+                    Key & Natural'Image (Value));
+
+        if No_Reply then
+            Unbounded.Append (Command,
+                Unbounded.To_Unbounded_String (" noreply"));
+        end if;
+
+        return Unbounded.To_String (Command) & ASCII.CR & ASCII.LF;
+    end Generate_Decr;
+
 
     procedure Write_Command (Conn : in Connection; Command : in String) is
         use GNAT.Sockets;

@@ -1,7 +1,6 @@
 
 with AUnit.Test_Cases, AUnit.Assertions;
 use AUnit.Test_Cases, AUnit.Assertions;
-with Ada.Text_IO;
 
 package body Memcache.Test.Incr is
     procedure Register_Tests (T : in out Incr_Test) is
