@@ -157,6 +157,8 @@ private
                                 Expire : in Expiration;
                                 No_Reply : in Boolean) return String;
 
+    function Generate_Get (Key : in String) return String;
+
     procedure Write_Command (Conn : in Connection; Command : in String);
     function Read_Until (Conn : in Connection; Terminator : in String;
                     Trim_CRLF : in Boolean := True)

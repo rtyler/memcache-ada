@@ -334,6 +334,13 @@ package body Memcache is
     end Generate_Set;
 
 
+    function Generate_Get (Key : in String) return String is
+    begin
+        Validate (Key);
+
+        return Append_CRLF ("get " & Key);
+    end Generate_Get;
+
     procedure Write_Command (Conn : in Connection; Command : in String) is
         use GNAT.Sockets;
         use Ada.Streams;
