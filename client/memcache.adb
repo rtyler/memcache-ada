@@ -5,6 +5,7 @@ with Ada.Streams.Stream_IO;
 with Ada.Strings.Fixed;
 with Ada.Text_IO;
 with GNAT.Sockets;
+with GNAT.String_Split;
 
 use Ada.Strings;
 use type Ada.Streams.Stream_Element_Count;
@@ -40,10 +41,15 @@ package body Memcache is
     end Disconnect;
 
     function Get (This : in Connection; Key : in String)
-                return Unbounded.Unbounded_String is
+                return String is
+        Command : String := Generate_Get (Key);
     begin
-        raise Not_Implemented;
-        return Unbounded.To_Unbounded_String ("");
+        Write_Command (Conn => This, Command => Command);
+        declare
+            Response : String := Read_Get_Response (This);
+        begin
+            return Response;
+        end;
     end Get;
 
     function Set (This : in Connection;
@@ -366,35 +372,6 @@ package body Memcache is
         Data   : Stream_Element_Array (1 .. 1);
         R_Length : Natural;
         Read_Char : Character;
-
-        function Should_Exit (Buffer : in Unbounded.Unbounded_String;
-                        Terminator : in String) return Boolean is
-            R_Length : Natural := Unbounded.Length (Buffer);
-            T_Length : Natural := Terminator'Length;
-            R_Last_Char : Character := Unbounded.Element (Buffer, R_Length);
-            T_Last_Char : Character := Terminator (Terminator'Last);
-        begin
-            if R_Length < T_Length then
-                return False;
-            end if;
-
-            --  Only check the last N characters if the current
-            --  character matches the last one in the Terminator
-            if R_Last_Char /= T_Last_Char then
-                return False;
-            end if;
-
-            declare
-                Sub : String := Unbounded.Slice
-                    (Buffer, R_Length - (T_Length - 1), R_Length);
-            begin
-                if Terminator = Sub then
-                    return True;
-                end if;
-            end;
-            return False;
-        end Should_Exit;
-
     begin
         Channel := Stream (Conn.Sock);
         loop
@@ -402,7 +379,7 @@ package body Memcache is
             Read_Char := Character'Val (Data (1));
             Unbounded.Append (Response, Read_Char);
 
-            if Should_Exit (Response, Terminator) then
+            if Contains_String (Response, Terminator) then
                 exit;
             end if;
         end loop;
@@ -422,6 +399,96 @@ package body Memcache is
     begin
         return Read_Until (Conn, End_of_Line);
     end Read_Response;
+
+    function Read_Get_Response (Conn : in Connection) return String is
+        use GNAT.Sockets;
+        use GNAT.String_Split;
+        use Ada.Streams;
+        Channel : Stream_Access; -- From GNAT.Sockets
+        Response : Unbounded.Unbounded_String;
+        Offset : Stream_Element_Count;
+        Data   : Stream_Element_Array (1 .. 1);
+        Terminator : String := Append_CRLF ("");
+        Read_Char : Character;
+
+        --  Filled in after the first line of the response is read
+        Get_Flags : Flags;
+        Block_Length : Natural;
+    begin
+        Channel := Stream (Conn.Sock);
+        loop
+            Read (Channel.All, Data, Offset);
+            Read_Char := Character'Val (Data (1));
+            Unbounded.Append (Response, Read_Char);
+
+            if Contains_String (Response, Terminator) then
+                exit;
+            end if;
+        end loop;
+
+        --  The first line in the response that we get should be formatted
+        --  along the lines of: VALUE <key> <flags> <length>\r\n
+        --
+        declare
+            Subs : Slice_Set;
+            Buffer : String := Unbounded.To_String (Response);
+            --  Adust the buffer to trim the trailing ASCII.CR and ASCII.LF
+            Trimmed : String := Buffer (1 .. (Buffer'Last - 2));
+        begin
+            Create (Subs, Trimmed, " ", Mode => Multiple);
+
+            if Slice_Count (Subs) /= 4 then
+                --  If we don't have four fields (as documented above) then
+                --  we're in a real pickle.
+                raise Unexpected_Response;
+            end if;
+
+            Get_Flags := Flags'Value (Slice (Subs, 3));
+            Block_Length := Natural'Value (Slice (Subs, 4));
+        end;
+
+        declare
+            Block_Offset : Stream_Element_Count;
+            --  The data to be read in the block should be of length
+            --  Block_Length followed by the customary ASCII.CR and ASCII.LR
+            Block_Data   : Stream_Element_Array (1 .. Stream_Element_Count(Block_Length + 2));
+            Block_Response : Unbounded.Unbounded_String;
+        begin
+            Read (Channel.All, Block_Data, Block_Offset);
+            for I in 1 .. (Block_Offset - 2) loop
+                Unbounded.Append (Block_Response, Character'Val (Block_Data (I)));
+            end loop;
+            return Unbounded.To_String (Block_Response);
+        end;
+    end Read_Get_Response;
+
+    function Contains_String (Haystack : in Unbounded.Unbounded_String;
+                    Needle : in String) return Boolean is
+        R_Length : Natural := Unbounded.Length (Haystack);
+        T_Length : Natural := Needle'Length;
+        R_Last_Char : Character := Unbounded.Element (Haystack, R_Length);
+        T_Last_Char : Character := Needle (Needle'Last);
+    begin
+        if R_Length < T_Length then
+            return False;
+        end if;
+
+        --  Only check the last N characters if the current
+        --  character matches the last one in the Terminator
+        if R_Last_Char /= T_Last_Char then
+            return False;
+        end if;
+
+        declare
+            Sub : String := Unbounded.Slice
+                (Haystack, R_Length - (T_Length - 1), R_Length);
+        begin
+            if Needle = Sub then
+                return True;
+            end if;
+        end;
+        return False;
+    end Contains_String;
 
     function Append_CRLF (Input : in String) return String is
     begin

@@ -31,7 +31,7 @@ package Memcache is
     type Connection is tagged private;
 
     function Get (This : in Connection; Key : in String)
-                return Unbounded.Unbounded_String;
+                return String;
 
 
     function Set (This : in Connection;
@@ -164,7 +164,10 @@ private
                     Trim_CRLF : in Boolean := True)
                 return String;
     function Read_Response (Conn : in Connection) return String;
+    function Read_Get_Response (Conn : in Connection) return String;
 
+    function Contains_String (Haystack : in Unbounded.Unbounded_String;
+                    Needle : in String) return Boolean;
     function Append_CRLF (Input : in String) return String;
 
 end Memcache;
