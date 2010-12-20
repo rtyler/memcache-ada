@@ -375,7 +375,7 @@ package body Memcache is
     begin
         Channel := Stream (Conn.Sock);
         loop
-            Read (Channel.All, Data, Offset);
+            Read (Channel.all, Data, Offset);
             Read_Char := Character'Val (Data (1));
             Unbounded.Append (Response, Read_Char);
 
@@ -417,7 +417,7 @@ package body Memcache is
     begin
         Channel := Stream (Conn.Sock);
         loop
-            Read (Channel.All, Data, Offset);
+            Read (Channel.all, Data, Offset);
             Read_Char := Character'Val (Data (1));
             Unbounded.Append (Response, Read_Char);
 
@@ -451,10 +451,11 @@ package body Memcache is
             Block_Offset : Stream_Element_Count;
             --  The data to be read in the block should be of length
             --  Block_Length followed by the customary ASCII.CR and ASCII.LR
-            Block_Data   : Stream_Element_Array (1 .. Stream_Element_Count(Block_Length + 2));
+            Block_Data   : Stream_Element_Array
+                                (1 .. Stream_Element_Count (Block_Length + 2));
             Block_Response : String (1 .. Block_Length);
         begin
-            Read (Channel.All, Block_Data, Block_Offset);
+            Read (Channel.all, Block_Data, Block_Offset);
             for I in 1 .. (Block_Offset - 2) loop
                 Block_Response (Integer (I)) := Character'Val (Block_Data (I));
             end loop;
