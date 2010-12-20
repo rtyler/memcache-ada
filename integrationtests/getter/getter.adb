@@ -1,7 +1,10 @@
 --
 
 with Ada.Command_Line;
+with Ada.Strings.Unbounded;
 with Memcache;
+
+use Ada.Strings.Unbounded;
 
 procedure Getter is
     Port : String := Ada.Command_Line.Argument (1);
@@ -11,12 +14,12 @@ procedure Getter is
 begin
     C.Connect;
     declare
-        Result : String := C.Get("getter");
+        Reply : Memcache.Response := C.Get ("getter");
     begin
-        if Result = "derpderp" then
-            Ada.Command_Line.Set_Exit_Status(0);
+        if Reply.Data = "derpderp" then
+            Ada.Command_Line.Set_Exit_Status (0);
         else
-            Ada.Command_Line.Set_Exit_Status(1);
+            Ada.Command_Line.Set_Exit_Status (1);
         end if;
     end;
     C.Disconnect;

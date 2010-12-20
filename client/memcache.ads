@@ -18,6 +18,7 @@ use Ada.Strings.Bounded;
 package Memcache is
     package Unbounded renames Ada.Strings.Unbounded;
     package Bounded is new Generic_Bounded_Length (Max => 250);
+    use type Unbounded.Unbounded_String;
     use type Bounded.Bounded_String; -- Pull in operators for Bounded_String
     package Key_Vectors is new Vectors (Natural, Bounded.Bounded_String);
 
@@ -26,31 +27,35 @@ package Memcache is
     --  otherwise the server will treat it as a unix timestamp
     type Expiration is range 0 .. 60*60*24*30;
     subtype Port_Type is GNAT.Sockets.Port_Type;
-    type Flags is mod 2 ** 16;
+    type Flags_Type is mod 2 ** 16;
+
+    type Response is record
+        Flags : Flags_Type;
+        Data : Unbounded.Unbounded_String;
+    end record;
 
     type Connection is tagged private;
 
     function Get (This : in Connection; Key : in String)
-                return String;
-
+                return Response;
 
     function Set (This : in Connection;
                     Key : in String;
                     Value : in String;
-                    Set_Flags : in Flags := 0;
+                    Flags  : in Flags_Type := 0;
                     Expire : in Expiration := 0)
                 return Boolean;
 
     procedure Set (This : in Connection;
                     Key : in String;
                     Value : in String;
-                    Set_Flags : in Flags := 0;
+                    Flags : in Flags_Type := 0;
                     Expire : in Expiration := 0);
 
     function Set (This : in Connection;
                     Key : in String;
                     Value : in String;
-                    Set_Flags : in Flags := 0;
+                    Flags : in Flags_Type := 0;
                     Expire : in Ada.Calendar.Time)
                 return Boolean;
 
@@ -153,7 +158,7 @@ private
                                 No_Reply : in Boolean) return String;
 
     function Generate_Set (Key : in String; Value : in String;
-                                Set_Flags : in Flags;
+                                Flags : in Flags_Type;
                                 Expire : in Expiration;
                                 No_Reply : in Boolean) return String;
 
@@ -164,7 +169,7 @@ private
                     Trim_CRLF : in Boolean := True)
                 return String;
     function Read_Response (Conn : in Connection) return String;
-    function Read_Get_Response (Conn : in Connection) return String;
+    function Read_Get_Response (Conn : in Connection) return Response;
 
     function Contains_String (Haystack : in Unbounded.Unbounded_String;
                     Needle : in String) return Boolean;

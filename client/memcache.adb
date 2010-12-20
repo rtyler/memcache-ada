@@ -41,25 +41,25 @@ package body Memcache is
     end Disconnect;
 
     function Get (This : in Connection; Key : in String)
-                return String is
+                return Response is
         Command : String := Generate_Get (Key);
     begin
         Write_Command (Conn => This, Command => Command);
         declare
-            Response : String := Read_Get_Response (This);
+            Reply : Response := Read_Get_Response (This);
         begin
-            return Response;
+            return Reply;
         end;
     end Get;
 
     function Set (This : in Connection;
                     Key : in String;
                     Value : in String;
-                    Set_Flags : in Flags := 0;
+                    Flags : in Flags_Type := 0;
                     Expire : in Expiration := 0)
                 return Boolean is
         Command : String := Generate_Set (Key, Value,
-                                Set_Flags, Expire, False);
+                                Flags, Expire, False);
     begin
         Write_Command (Conn => This, Command => Command);
         declare
@@ -75,10 +75,10 @@ package body Memcache is
     procedure Set (This : in Connection;
                     Key : in String;
                     Value : in String;
-                    Set_Flags : in Flags := 0;
+                    Flags : in Flags_Type := 0;
                     Expire : in Expiration := 0) is
         Unused : Boolean := Set (This, Key, Value,
-                        Set_Flags, Expire);
+                        Flags, Expire);
     begin
         null;
     end Set;
@@ -86,7 +86,7 @@ package body Memcache is
     function Set (This : in Connection;
                     Key : in String;
                     Value : in String;
-                    Set_Flags : in Flags := 0;
+                    Flags : in Flags_Type := 0;
                     Expire : in Ada.Calendar.Time)
                 return Boolean is
     begin
@@ -315,17 +315,16 @@ package body Memcache is
 
 
     function Generate_Set (Key : in String; Value : in String;
-                                Set_Flags : in Flags;
+                                Flags : in Flags_Type;
                                 Expire : in Expiration;
                                 No_Reply : in Boolean) return String is
         Command : Unbounded.Unbounded_String;
     begin
---<command name> <key> <flags> <exptime> <bytes> [noreply]\r\n
         Validate (Key);
 
         Command := Unbounded.To_Unbounded_String ("set " &
                         Key &
-                        Flags'Image (Set_Flags) &
+                        Flags_Type'Image (Flags) &
                         Expiration'Image (Expire) &
                         Natural'Image (Value'Length) &
                         ASCII.CR & ASCII.LF);
@@ -400,28 +399,29 @@ package body Memcache is
         return Read_Until (Conn, End_of_Line);
     end Read_Response;
 
-    function Read_Get_Response (Conn : in Connection) return String is
+    function Read_Get_Response (Conn : in Connection) return Response is
         use GNAT.Sockets;
         use GNAT.String_Split;
         use Ada.Streams;
         Channel : Stream_Access; -- From GNAT.Sockets
-        Response : Unbounded.Unbounded_String;
+        First_Line : Unbounded.Unbounded_String;
         Offset : Stream_Element_Count;
         Data   : Stream_Element_Array (1 .. 1);
         Terminator : String := Append_CRLF ("");
         Read_Char : Character;
 
         --  Filled in after the first line of the response is read
-        Get_Flags : Flags;
+        Get_Flags : Flags_Type;
         Block_Length : Natural;
+        Reply : Response;
     begin
         Channel := Stream (Conn.Sock);
         loop
             Read (Channel.all, Data, Offset);
             Read_Char := Character'Val (Data (1));
-            Unbounded.Append (Response, Read_Char);
+            Unbounded.Append (First_Line, Read_Char);
 
-            if Contains_String (Response, Terminator) then
+            if Contains_String (First_Line, Terminator) then
                 exit;
             end if;
         end loop;
@@ -431,7 +431,7 @@ package body Memcache is
         --
         declare
             Subs : Slice_Set;
-            Buffer : String := Unbounded.To_String (Response);
+            Buffer : String := Unbounded.To_String (First_Line);
             --  Adust the buffer to trim the trailing ASCII.CR and ASCII.LF
             Trimmed : String := Buffer (1 .. (Buffer'Last - 2));
         begin
@@ -443,7 +443,7 @@ package body Memcache is
                 raise Unexpected_Response;
             end if;
 
-            Get_Flags := Flags'Value (Slice (Subs, 3));
+            Get_Flags := Flags_Type'Value (Slice (Subs, 3));
             Block_Length := Natural'Value (Slice (Subs, 4));
         end;
 
@@ -453,14 +453,18 @@ package body Memcache is
             --  Block_Length followed by the customary ASCII.CR and ASCII.LR
             Block_Data   : Stream_Element_Array
                                 (1 .. Stream_Element_Count (Block_Length + 2));
-            Block_Response : String (1 .. Block_Length);
+            Block_Response : Unbounded.Unbounded_String;
         begin
             Read (Channel.all, Block_Data, Block_Offset);
             for I in 1 .. (Block_Offset - 2) loop
-                Block_Response (Integer (I)) := Character'Val (Block_Data (I));
+                Unbounded.Append (Block_Response,
+                            Character'Val (Block_Data (I)));
             end loop;
-            return Block_Response;
+            Reply.Data := Block_Response;
         end;
+
+        return Reply;
+
     end Read_Get_Response;
 
     function Contains_String (Haystack : in Unbounded.Unbounded_String;
