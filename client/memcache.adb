@@ -452,13 +452,13 @@ package body Memcache is
             --  The data to be read in the block should be of length
             --  Block_Length followed by the customary ASCII.CR and ASCII.LR
             Block_Data   : Stream_Element_Array (1 .. Stream_Element_Count(Block_Length + 2));
-            Block_Response : Unbounded.Unbounded_String;
+            Block_Response : String (1 .. Block_Length);
         begin
             Read (Channel.All, Block_Data, Block_Offset);
             for I in 1 .. (Block_Offset - 2) loop
-                Unbounded.Append (Block_Response, Character'Val (Block_Data (I)));
+                Block_Response (Integer (I)) := Character'Val (Block_Data (I));
             end loop;
-            return Unbounded.To_String (Block_Response);
+            return Block_Response;
         end;
     end Read_Get_Response;
 
