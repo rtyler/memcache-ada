@@ -207,11 +207,6 @@ package body Memcache is
     --
     --  Private functions/procedures
     --
-    procedure Validate (Keys : in Key_Vectors.Vector) is
-    begin
-        raise Not_Implemented;
-    end Validate;
-
     procedure Validate (Key : in String) is
     begin
         --  A key must be between 1 and 250 characters in length

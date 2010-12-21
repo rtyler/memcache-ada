@@ -8,19 +8,14 @@
 with Ada.Calendar;
 with Ada.Containers.Vectors;
 with Ada.Streams;
-with Ada.Strings.Bounded;
 with Ada.Strings.Unbounded;
 with GNAT.Sockets;
 
 use Ada.Containers;
-use Ada.Strings.Bounded;
 
 package Memcache is
     package Unbounded renames Ada.Strings.Unbounded;
-    package Bounded is new Generic_Bounded_Length (Max => 250);
     use type Unbounded.Unbounded_String;
-    use type Bounded.Bounded_String; -- Pull in operators for Bounded_String
-    package Key_Vectors is new Vectors (Natural, Bounded.Bounded_String);
 
     --
     --  When passing an expiration, it must be within this range
@@ -137,7 +132,6 @@ private
     --      * No spaces in keys
     --      * Key length is less than or equal to 250 characters
     --      * Key length is greater than zero characters
-    procedure Validate (Keys : in Key_Vectors.Vector);
     procedure Validate (Key : in String);
 
     procedure Is_Connected (C : in Connection);
