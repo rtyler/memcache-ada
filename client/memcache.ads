@@ -120,6 +120,7 @@ package Memcache is
     Unexpected_Response : exception;
     Invalid_Connection : exception;
     Not_Implemented : exception;
+    Not_Connected : exception;
 
 private
 
@@ -138,6 +139,8 @@ private
     --      * Key length is greater than zero characters
     procedure Validate (Keys : in Key_Vectors.Vector);
     procedure Validate (Key : in String);
+
+    procedure Is_Connected (C : in Connection);
 
 
     --

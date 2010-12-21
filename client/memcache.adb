@@ -44,6 +44,7 @@ package body Memcache is
                 return Response is
         Command : String := Generate_Get (Key);
     begin
+        Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
             Reply : Response := Read_Get_Response (This);
@@ -61,6 +62,7 @@ package body Memcache is
         Command : String := Generate_Set (Key, Value,
                                 Flags, Expire, False);
     begin
+        Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
             Response : String := Read_Response (This);
@@ -100,6 +102,7 @@ package body Memcache is
                 return Boolean is
         Command : String := Generate_Delete (Key, Delayed, False);
     begin
+        Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
             Response : String := Read_Response (This);
@@ -141,6 +144,7 @@ package body Memcache is
                 return Boolean is
         Command : String := Generate_Incr (Key, Value, False);
     begin
+        Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
             Response : String := Read_Response (This);
@@ -164,6 +168,7 @@ package body Memcache is
                 return Boolean is
         Command : String := Generate_Decr (Key, Value, False);
     begin
+        Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
             Response : String := Read_Response (This);
@@ -187,6 +192,7 @@ package body Memcache is
     procedure Dump_Stats (This : in Connection) is
         Command : String := Append_CRLF ("stats");
     begin
+        Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
             Terminator : String :=  Append_CRLF ("END");
@@ -232,6 +238,15 @@ package body Memcache is
             end;
         end loop;
     end Validate;
+
+    procedure Is_Connected (C : in Connection) is
+    begin
+        if C.Connected then
+            return;
+        end if;
+
+        raise Not_Connected;
+    end Is_Connected;
 
     function Generate_Delete (Key : in String;
                                 Delayed : in Expiration;
