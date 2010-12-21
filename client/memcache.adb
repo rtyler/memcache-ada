@@ -67,7 +67,7 @@ package body Memcache is
         declare
             Response : String := Read_Response (This);
         begin
-            if Response = "STORED" then
+            if Response = Response_Stored  then
                 return True;
             end if;
             return False;
@@ -107,9 +107,9 @@ package body Memcache is
         declare
             Response : String := Read_Response (This);
         begin
-            if Response = "DELETED" then
+            if Response = Response_Deleted then
                 return True;
-            elsif Response = "NOT_FOUND" then
+            elsif Response = Response_Not_Found then
                 return False;
             else
                 raise Unexpected_Response;
@@ -149,7 +149,7 @@ package body Memcache is
         declare
             Response : String := Read_Response (This);
         begin
-            if Response = "NOT_FOUND" then
+            if Response = Response_Not_Found then
                 return False;
             end if;
         end;
@@ -173,7 +173,7 @@ package body Memcache is
         declare
             Response : String := Read_Response (This);
         begin
-            if Response = "NOT_FOUND" then
+            if Response = Response_Not_Found then
                 return False;
             end if;
         end;

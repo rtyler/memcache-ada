@@ -119,6 +119,10 @@ package Memcache is
 
 private
 
+    Response_Stored : constant String := "STORED";
+    Response_Deleted : constant String := "DELETED";
+    Response_Not_Found : constant String := "NOT_FOUND";
+
     type Connection is tagged record
         Sock : GNAT.Sockets.Socket_Type;
         Address : GNAT.Sockets.Sock_Addr_Type;
