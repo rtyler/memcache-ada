@@ -18,7 +18,7 @@ package Memcache is
     --
     --  When passing an expiration, it must be within this range
     --  otherwise the server will treat it as a unix timestamp
-    type Expiration is range 0 .. 60*60*24*30;
+    subtype Expiration is Duration range 0.0 .. 2592000.0;
     subtype Port_Type is GNAT.Sockets.Port_Type;
     type Flags_Type is mod 2 ** 16;
 
@@ -36,14 +36,14 @@ package Memcache is
                     Key : in String;
                     Value : in String;
                     Flags  : in Flags_Type := 0;
-                    Expire : in Expiration := 0)
+                    Expire : in Expiration := 0.0)
                 return Boolean;
 
     procedure Set (This : in Connection;
                     Key : in String;
                     Value : in String;
                     Flags : in Flags_Type := 0;
-                    Expire : in Expiration := 0);
+                    Expire : in Expiration := 0.0);
 
     function Set (This : in Connection;
                     Key : in String;
@@ -56,7 +56,7 @@ package Memcache is
     --  Functions/procedures implementing the "delete" memcached
     --  command
     function Delete (This : in Connection; Key : in String;
-                    Delayed : in Expiration := 0)
+                    Delayed : in Expiration := 0.0)
                 return Boolean;
 
     function Delete (This : in Connection; Key : in String;
@@ -64,7 +64,7 @@ package Memcache is
                 return Boolean;
 
     procedure Delete (This : in Connection; Key : in String;
-                    Delayed : in Expiration := 0);
+                    Delayed : in Expiration := 0.0);
 
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time);

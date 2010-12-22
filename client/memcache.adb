@@ -52,7 +52,7 @@ package body Memcache is
                     Key : in String;
                     Value : in String;
                     Flags : in Flags_Type := 0;
-                    Expire : in Expiration := 0)
+                    Expire : in Expiration := 0.0)
                 return Boolean is
         Command : constant String := Generate_Set (Key, Value,
                                 Flags, Expire, False);
@@ -73,7 +73,7 @@ package body Memcache is
                     Key : in String;
                     Value : in String;
                     Flags : in Flags_Type := 0;
-                    Expire : in Expiration := 0) is
+                    Expire : in Expiration := 0.0) is
         Unused : constant Boolean := Set (This, Key, Value,
                         Flags, Expire);
     begin
@@ -93,7 +93,7 @@ package body Memcache is
 
 
     function Delete (This : in Connection; Key : in String;
-                    Delayed : in Expiration := 0)
+                    Delayed : in Expiration := 0.0)
                 return Boolean is
         Command : constant String := Generate_Delete (Key, Delayed, False);
     begin
@@ -121,7 +121,7 @@ package body Memcache is
     end Delete;
 
     procedure Delete (This : in Connection; Key : in String;
-                    Delayed : in Expiration := 0) is
+                    Delayed : in Expiration := 0.0) is
         Unused : constant Boolean := Delete (This, Key, Delayed);
     begin
         null;
@@ -245,15 +245,11 @@ package body Memcache is
     begin
         Validate (Key);
 
-        Command := Unbounded.To_Unbounded_String ("delete ");
+        Command := Unbounded.To_Unbounded_String ("delete " & Key);
 
-        if Delayed = 0 then
+        if Delayed /= 0.0 then
             Unbounded.Append (Command,
-                Unbounded.To_Unbounded_String (Key));
-        else
-            Unbounded.Append (Command,
-                Unbounded.To_Unbounded_String (Key &
-                                Expiration'Image (Delayed)));
+                    Natural'Image (Natural (Delayed)));
         end if;
 
         if No_Reply then

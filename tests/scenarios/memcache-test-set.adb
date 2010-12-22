@@ -21,7 +21,8 @@ package body Memcache.Test.Set is
 
     procedure Test_Gen_Set (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : String := Generate_Set ("sets", "magicvalue", 0, 60, False);
+        Command : String := Generate_Set ("sets", "magicvalue", 0,
+                                                60.0, False);
         Expected : String := "set sets 0 60 10" &
                             ASCII.CR & ASCII.LF &
                             "magicvalue" & ASCII.CR & ASCII.LF;
