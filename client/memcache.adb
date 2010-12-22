@@ -1,9 +1,9 @@
 --
 --
-with Ada.Characters.Handling;
-with Ada.Streams;
-with Ada.Text_IO;
-with GNAT.String_Split;
+private with Ada.Characters.Handling;
+private with Ada.Streams;
+private with Ada.Text_IO;
+private with GNAT.String_Split;
 
 use type Ada.Streams.Stream_Element_Count;
 

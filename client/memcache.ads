@@ -6,9 +6,10 @@
 --
 
 with Ada.Calendar;
-with Ada.Characters.Latin_1;
 with Ada.Strings.Unbounded;
 with GNAT.Sockets;
+
+private with Ada.Characters.Latin_1;
 
 package Memcache is
     package Unbounded renames Ada.Strings.Unbounded;
