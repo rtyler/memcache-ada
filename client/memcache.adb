@@ -1,10 +1,12 @@
 --
---
+
+private with Ada.Calendar;
 private with Ada.Characters.Handling;
 private with Ada.Streams;
 private with Ada.Text_IO;
 
 use type Ada.Streams.Stream_Element_Count;
+use type Ada.Calendar.Time;
 
 package body Memcache is
     function Create (Host : in String; Port : in Port_Type)
@@ -263,9 +265,21 @@ package body Memcache is
     function Generate_Delete (Key : in String;
                                 Delayed : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String is
+        Command : Unbounded.Unbounded_String;
+        Delayed_Since_Epoch : constant Natural := Natural (Delayed - Epoch);
     begin
         Validate (Key);
-        return  "";
+
+        Command := Unbounded.To_Unbounded_String ("delete " & Key);
+
+        Unbounded.Append (Command, Natural'Image (Delayed_Since_Epoch));
+
+        if No_Reply then
+            Unbounded.Append (Command,
+                Unbounded.To_Unbounded_String (" noreply"));
+        end if;
+
+        return Append_CRLF (Unbounded.To_String (Command));
     end Generate_Delete;
 
 

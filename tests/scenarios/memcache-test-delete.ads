@@ -12,6 +12,8 @@ package Memcache.Test.Delete is
 
     procedure Test_Gen_Delete (T :
                       in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Gen_Delete_Calendar (T :
+                      in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Gen_Delete_Delayed (T :
                       in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Gen_Delete_No_Reply (T :

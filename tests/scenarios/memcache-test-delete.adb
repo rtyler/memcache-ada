@@ -1,4 +1,5 @@
 
+with Ada.Calendar;
 with AUnit.Test_Cases, AUnit.Assertions;
 use AUnit.Test_Cases, AUnit.Assertions;
 
@@ -8,6 +9,9 @@ package body Memcache.Test.Delete is
     begin
         Register_Routine (T, Test_Gen_Delete'Access,
                 "Validate a delete call generates the right string");
+        Register_Routine (T, Test_Gen_Delete_Calendar'Access,
+                "Validate a delete call with a Time generates " &
+                "the right string");
         Register_Routine (T, Test_Gen_Delete_Delayed'Access,
                 "Validate a delayed delete call generates the right string");
         Register_Routine (T, Test_Gen_Delete_No_Reply'Access,
@@ -31,6 +35,18 @@ package body Memcache.Test.Delete is
     begin
         Assert (Command = Expected, "Bad command string");
     end Test_Gen_Delete;
+
+
+    procedure Test_Gen_Delete_Calendar (T :
+                      in out AUnit.Test_Cases.Test_Case'Class) is
+        Some_Time : Ada.Calendar.Time :=
+                            Ada.Calendar.Time_Of (1985, 11, 20);
+        Command : String := Memcache.Generate_Delete ("GoodKey",
+                                        Some_Time, False);
+        Expected : String := Append_CRLF ("delete GoodKey 501292800");
+    begin
+        Assert (Command = Expected, "Bad command string");
+    end Test_Gen_Delete_Calendar;
 
 
     procedure Test_Gen_Delete_Delayed (T :

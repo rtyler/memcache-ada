@@ -120,6 +120,8 @@ private
     Response_Stored : constant String := "STORED";
     Response_Deleted : constant String := "DELETED";
     Response_Not_Found : constant String := "NOT_FOUND";
+    Epoch : constant Ada.Calendar.Time :=
+                        Ada.Calendar.Time_Of (1970, 1, 1);
 
     CRLF : constant String := Ada.Characters.Latin_1.CR &
                                 Ada.Characters.Latin_1.LF;
