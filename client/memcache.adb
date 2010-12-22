@@ -1,13 +1,10 @@
 --
 --
 with Ada.Characters.Handling;
-with Ada.Streams.Stream_IO;
-with Ada.Strings.Fixed;
+with Ada.Streams;
 with Ada.Text_IO;
-with GNAT.Sockets;
 with GNAT.String_Split;
 
-use Ada.Strings;
 use type Ada.Streams.Stream_Element_Count;
 
 package body Memcache is
@@ -27,7 +24,6 @@ package body Memcache is
             return;
         end if;
 
-        Initialize;
         Create_Socket (Conn.Sock);
         Set_Socket_Option (Conn.Sock, Socket_Level, (Reuse_Address, True));
         Connect_Socket (Conn.Sock, Conn.Address);
@@ -42,12 +38,12 @@ package body Memcache is
 
     function Get (This : in Connection; Key : in String)
                 return Response is
-        Command : String := Generate_Get (Key);
+        Command : constant String := Generate_Get (Key);
     begin
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
-            Reply : Response := Read_Get_Response (This);
+            Reply : constant Response := Read_Get_Response (This);
         begin
             return Reply;
         end;
@@ -59,13 +55,13 @@ package body Memcache is
                     Flags : in Flags_Type := 0;
                     Expire : in Expiration := 0)
                 return Boolean is
-        Command : String := Generate_Set (Key, Value,
+        Command : constant String := Generate_Set (Key, Value,
                                 Flags, Expire, False);
     begin
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
-            Response : String := Read_Response (This);
+            Response : constant String := Read_Response (This);
         begin
             if Response = Response_Stored  then
                 return True;
@@ -79,7 +75,7 @@ package body Memcache is
                     Value : in String;
                     Flags : in Flags_Type := 0;
                     Expire : in Expiration := 0) is
-        Unused : Boolean := Set (This, Key, Value,
+        Unused : constant Boolean := Set (This, Key, Value,
                         Flags, Expire);
     begin
         null;
@@ -100,12 +96,12 @@ package body Memcache is
     function Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0)
                 return Boolean is
-        Command : String := Generate_Delete (Key, Delayed, False);
+        Command : constant String := Generate_Delete (Key, Delayed, False);
     begin
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
-            Response : String := Read_Response (This);
+            Response : constant String := Read_Response (This);
         begin
             if Response = Response_Deleted then
                 return True;
@@ -127,7 +123,7 @@ package body Memcache is
 
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0) is
-        Unused : Boolean := Delete (This, Key, Delayed);
+        Unused : constant Boolean := Delete (This, Key, Delayed);
     begin
         null;
     end Delete;
@@ -142,12 +138,12 @@ package body Memcache is
     function Increment (This : in Connection; Key : in String;
                     Value : in Natural)
                 return Boolean is
-        Command : String := Generate_Incr (Key, Value, False);
+        Command : constant String := Generate_Incr (Key, Value, False);
     begin
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
-            Response : String := Read_Response (This);
+            Response : constant String := Read_Response (This);
         begin
             if Response = Response_Not_Found then
                 return False;
@@ -166,12 +162,12 @@ package body Memcache is
     function Decrement (This : in Connection; Key : in String;
                     Value : in Natural)
                 return Boolean is
-        Command : String := Generate_Decr (Key, Value, False);
+        Command : constant String := Generate_Decr (Key, Value, False);
     begin
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
-            Response : String := Read_Response (This);
+            Response : constant String := Read_Response (This);
         begin
             if Response = Response_Not_Found then
                 return False;
@@ -190,13 +186,13 @@ package body Memcache is
     --  Stats from the memcached server come back in a relatively
     --  unstructured format, so this function will just dump to stdout
     procedure Dump_Stats (This : in Connection) is
-        Command : String := Append_CRLF ("stats");
+        Command : constant String := Append_CRLF ("stats");
     begin
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
-            Terminator : String :=  Append_CRLF ("END");
-            Response : String := Read_Until (This, Terminator);
+            Terminator : constant String :=  Append_CRLF ("END");
+            Response : constant String := Read_Until (This, Terminator);
         begin
             Ada.Text_IO.Put_Line ("Stats response:");
             Ada.Text_IO.Put_Line (Response);
@@ -221,7 +217,7 @@ package body Memcache is
         --      * No control characters
         for Index in Key'Range loop
             declare
-                Key_Ch : Character := Key (Index);
+                Key_Ch : constant Character := Key (Index);
             begin
                 if Character'Pos (Key_Ch) = 32 then
                     raise Invalid_Key_Error;
@@ -404,7 +400,7 @@ package body Memcache is
     end Read_Until;
 
     function Read_Response (Conn : in Connection) return String is
-        End_of_Line : String := Append_CRLF ("");
+        End_of_Line : constant String := Append_CRLF ("");
     begin
         return Read_Until (Conn, End_of_Line);
     end Read_Response;
@@ -417,7 +413,7 @@ package body Memcache is
         First_Line : Unbounded.Unbounded_String;
         Offset : Stream_Element_Count;
         Data   : Stream_Element_Array (1 .. 1);
-        Terminator : String := Append_CRLF ("");
+        Terminator : constant String := CRLF;
         Read_Char : Character;
 
         --  Filled in after the first line of the response is read
@@ -441,9 +437,9 @@ package body Memcache is
         --
         declare
             Subs : Slice_Set;
-            Buffer : String := Unbounded.To_String (First_Line);
+            Buffer : constant String := Unbounded.To_String (First_Line);
             --  Adust the buffer to trim the trailing ASCII.CR and ASCII.LF
-            Trimmed : String := Buffer (1 .. (Buffer'Last - 2));
+            Trimmed : constant String := Buffer (1 .. (Buffer'Last - 2));
         begin
             Create (Subs, Trimmed, " ", Mode => Multiple);
 
@@ -479,10 +475,11 @@ package body Memcache is
 
     function Contains_String (Haystack : in Unbounded.Unbounded_String;
                     Needle : in String) return Boolean is
-        R_Length : Natural := Unbounded.Length (Haystack);
-        T_Length : Natural := Needle'Length;
-        R_Last_Char : Character := Unbounded.Element (Haystack, R_Length);
-        T_Last_Char : Character := Needle (Needle'Last);
+        R_Length : constant Natural := Unbounded.Length (Haystack);
+        T_Length : constant Natural := Needle'Length;
+        R_Last_Char : constant Character := Unbounded.Element
+                                                (Haystack, R_Length);
+        T_Last_Char : constant Character := Needle (Needle'Last);
     begin
         if R_Length < T_Length then
             return False;
@@ -495,7 +492,7 @@ package body Memcache is
         end if;
 
         declare
-            Sub : String := Unbounded.Slice
+            Sub : constant String := Unbounded.Slice
                 (Haystack, R_Length - (T_Length - 1), R_Length);
         begin
             if Needle = Sub then
@@ -507,7 +504,7 @@ package body Memcache is
 
     function Append_CRLF (Input : in String) return String is
     begin
-        return Input & ASCII.CR & ASCII.LF;
+        return Input & CRLF;
     end Append_CRLF;
 end Memcache;
 

@@ -6,12 +6,9 @@
 --
 
 with Ada.Calendar;
-with Ada.Containers.Vectors;
-with Ada.Streams;
+with Ada.Characters.Latin_1;
 with Ada.Strings.Unbounded;
 with GNAT.Sockets;
-
-use Ada.Containers;
 
 package Memcache is
     package Unbounded renames Ada.Strings.Unbounded;
@@ -123,6 +120,9 @@ private
     Response_Deleted : constant String := "DELETED";
     Response_Not_Found : constant String := "NOT_FOUND";
 
+    CRLF : constant String := Ada.Characters.Latin_1.CR &
+                                Ada.Characters.Latin_1.LF;
+
     type Connection is tagged record
         Sock : GNAT.Sockets.Socket_Type;
         Address : GNAT.Sockets.Sock_Addr_Type;
@@ -138,6 +138,9 @@ private
     --      * Key length is greater than zero characters
     procedure Validate (Key : in String);
 
+    --
+    --  Verify that our Connection object has not been previously
+    --  disconnected, will raise `Not_Connected` if it has
     procedure Is_Connected (C : in Connection);
 
 
@@ -174,6 +177,9 @@ private
 
     function Contains_String (Haystack : in Unbounded.Unbounded_String;
                     Needle : in String) return Boolean;
+
+    --
+    --  Append a \r\n on to the Input string
     function Append_CRLF (Input : in String) return String;
 
 end Memcache;

@@ -6,7 +6,7 @@ project Memcache is
 
     package Compiler is
     for Default_Switches("ada") use
-            ("-g", "-gnatv", "-gnatf", "-gnatyabcefhiklmnprst", "-gnat05");
+            ("-g", "-gnatv", "-gnatwa", "-gnatf", "-gnatyabcefhiklmnprst", "-gnat05");
     end Compiler;
 end Memcache;
 
