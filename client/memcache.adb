@@ -257,7 +257,7 @@ package body Memcache is
                 Unbounded.To_Unbounded_String (" noreply"));
         end if;
 
-        return Unbounded.To_String (Command) & ASCII.CR & ASCII.LF;
+        return Append_CRLF (Unbounded.To_String (Command));
     end Generate_Delete;
 
     function Generate_Delete (Key : in String;
@@ -288,7 +288,7 @@ package body Memcache is
                 Unbounded.To_Unbounded_String (" noreply"));
         end if;
 
-        return Unbounded.To_String (Command) & ASCII.CR & ASCII.LF;
+        return Append_CRLF (Unbounded.To_String (Command));
     end Generate_Incr;
 
 
@@ -311,7 +311,7 @@ package body Memcache is
                 Unbounded.To_Unbounded_String (" noreply"));
         end if;
 
-        return Unbounded.To_String (Command) & ASCII.CR & ASCII.LF;
+        return Append_CRLF (Unbounded.To_String (Command));
     end Generate_Decr;
 
 
@@ -326,10 +326,10 @@ package body Memcache is
         Command := Unbounded.To_Unbounded_String ("set " &
                         Key &
                         Flags_Type'Image (Flags) &
-                        Expiration'Image (Expire) &
+                        Natural'Image (Natural (Expire)) &
                         Natural'Image (Value'Length) &
-                        ASCII.CR & ASCII.LF);
-        Unbounded.Append (Command, Append_CRLF (Value));
+                        CRLF &
+                        Append_CRLF (Value));
 
         if No_Reply then
             Unbounded.Append (Command,
