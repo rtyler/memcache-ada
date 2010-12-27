@@ -10,5 +10,7 @@ package Memcache.Test.Set is
 
     procedure Test_Gen_Set (T :
                       in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Gen_Set_Calendar (T :
+                      in out AUnit.Test_Cases.Test_Case'Class);
 end Memcache.Test.Set;
 

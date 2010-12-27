@@ -168,6 +168,10 @@ private
                                 Flags : in Flags_Type;
                                 Expire : in Expiration;
                                 No_Reply : in Boolean) return String;
+    function Generate_Set (Key : in String; Value : in String;
+                                Flags : in Flags_Type;
+                                Expire : in Ada.Calendar.Time;
+                                No_Reply : in Boolean) return String;
 
     function Generate_Get (Key : in String) return String;
 
