@@ -447,9 +447,8 @@ package body Memcache is
     end Read_Until;
 
     function Read_Response (Conn : in Connection) return String is
-        End_of_Line : constant String := Append_CRLF ("");
     begin
-        return Read_Until (Conn, End_of_Line);
+        return Read_Until (Conn, CRLF);
     end Read_Response;
 
     function Read_Get_Response (Conn : in Connection)
