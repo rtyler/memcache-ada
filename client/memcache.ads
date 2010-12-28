@@ -169,6 +169,13 @@ private
                                 Key : in String;
                                 Value : in String;
                                 Flags : in Flags_Type;
+                                Expire : in Natural;
+                                No_Reply : in Boolean) return String;
+
+    function Generate_Store (Kind : in Store_Commands;
+                                Key : in String;
+                                Value : in String;
+                                Flags : in Flags_Type;
                                 Expire : in Expiration;
                                 No_Reply : in Boolean) return String;
 

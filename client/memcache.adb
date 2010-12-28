@@ -333,7 +333,7 @@ package body Memcache is
                                 Key : in String;
                                 Value : in String;
                                 Flags : in Flags_Type;
-                                Expire : in Expiration;
+                                Expire : in Natural;
                                 No_Reply : in Boolean) return String is
         Command : Unbounded.Unbounded_String;
     begin
@@ -350,14 +350,12 @@ package body Memcache is
                 Command := Unbounded.To_Unbounded_String ("prepend ");
             when Replace =>
                 Command := Unbounded.To_Unbounded_String ("replace ");
-            when others =>
-                raise Not_Implemented;
         end case;
 
         Unbounded.Append (Command, Unbounded.To_Unbounded_String (
                         Key &
                         Flags_Type'Image (Flags) &
-                        Natural'Image (Natural (Expire)) &
+                        Natural'Image (Expire) &
                         Natural'Image (Value'Length) &
                         CRLF &
                         Append_CRLF (Value)));
@@ -374,35 +372,24 @@ package body Memcache is
                                 Key : in String;
                                 Value : in String;
                                 Flags : in Flags_Type;
+                                Expire : in Expiration;
+                                No_Reply : in Boolean) return String is
+        Natural_Expire : constant Natural := Natural (Expire);
+    begin
+        return Generate_Store (Kind, Key, Value,
+                            Flags, Natural_Expire, No_Reply);
+    end Generate_Store;
+
+    function Generate_Store (Kind : in Store_Commands;
+                                Key : in String;
+                                Value : in String;
+                                Flags : in Flags_Type;
                                 Expire : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String is
-        Command : Unbounded.Unbounded_String;
         Expire_Since_Epoch : constant Natural := Natural (Expire - Epoch);
     begin
-        Validate (Key);
-
-        case Kind is
-            when Set =>
-                Command := Unbounded.To_Unbounded_String ("set ");
-            when others =>
-                raise Not_Implemented;
-        end case;
-
-        Unbounded.Append (Command,
-                    Unbounded.To_Unbounded_String (
-                        Key &
-                        Flags_Type'Image (Flags) &
-                        Natural'Image (Expire_Since_Epoch) &
-                        Natural'Image (Value'Length) &
-                        CRLF &
-                        Append_CRLF (Value)));
-
-        if No_Reply then
-            Unbounded.Append (Command,
-                Unbounded.To_Unbounded_String (" noreply"));
-        end if;
-
-        return Unbounded.To_String (Command);
+        return Generate_Store (Kind, Key, Value,
+                            Flags, Expire_Since_Epoch, No_Reply);
     end Generate_Store;
 
     function Generate_Get (Key : in String) return String is
