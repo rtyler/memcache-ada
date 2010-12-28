@@ -122,6 +122,7 @@ private
     Response_Not_Found : constant String := "NOT_FOUND";
     Epoch : constant Ada.Calendar.Time :=
                         Ada.Calendar.Time_Of (1970, 1, 1);
+    type Store_Commands is (Set, Add, Replace, Append, Prepend);
 
     CRLF : constant String := Ada.Characters.Latin_1.CR &
                                 Ada.Characters.Latin_1.LF;
@@ -164,11 +165,16 @@ private
     function Generate_Decr (Key : in String; Value : in Natural;
                                 No_Reply : in Boolean) return String;
 
-    function Generate_Set (Key : in String; Value : in String;
+    function Generate_Store (Kind : in Store_Commands;
+                                Key : in String;
+                                Value : in String;
                                 Flags : in Flags_Type;
                                 Expire : in Expiration;
                                 No_Reply : in Boolean) return String;
-    function Generate_Set (Key : in String; Value : in String;
+
+    function Generate_Store (Kind : in Store_Commands;
+                                Key : in String;
+                                Value : in String;
                                 Flags : in Flags_Type;
                                 Expire : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String;

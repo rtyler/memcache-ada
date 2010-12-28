@@ -56,7 +56,7 @@ package body Memcache is
                     Flags : in Flags_Type := 0;
                     Expire : in Expiration := 0.0)
                 return Boolean is
-        Command : constant String := Generate_Set (Key, Value,
+        Command : constant String := Generate_Store (Set, Key, Value,
                                 Flags, Expire, False);
     begin
         Is_Connected (This);
@@ -329,7 +329,9 @@ package body Memcache is
     end Generate_Decr;
 
 
-    function Generate_Set (Key : in String; Value : in String;
+    function Generate_Store (Kind : in Store_Commands;
+                                Key : in String;
+                                Value : in String;
                                 Flags : in Flags_Type;
                                 Expire : in Expiration;
                                 No_Reply : in Boolean) return String is
@@ -337,13 +339,20 @@ package body Memcache is
     begin
         Validate (Key);
 
-        Command := Unbounded.To_Unbounded_String ("set " &
+        case Kind is
+            when Set =>
+                Command := Unbounded.To_Unbounded_String ("set ");
+            when others =>
+                raise Not_Implemented;
+        end case;
+
+        Unbounded.Append (Command, Unbounded.To_Unbounded_String (
                         Key &
                         Flags_Type'Image (Flags) &
                         Natural'Image (Natural (Expire)) &
                         Natural'Image (Value'Length) &
                         CRLF &
-                        Append_CRLF (Value));
+                        Append_CRLF (Value)));
 
         if No_Reply then
             Unbounded.Append (Command,
@@ -351,9 +360,11 @@ package body Memcache is
         end if;
 
         return Unbounded.To_String (Command);
-    end Generate_Set;
+    end Generate_Store;
 
-    function Generate_Set (Key : in String; Value : in String;
+    function Generate_Store (Kind : in Store_Commands;
+                                Key : in String;
+                                Value : in String;
                                 Flags : in Flags_Type;
                                 Expire : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String is
@@ -362,13 +373,21 @@ package body Memcache is
     begin
         Validate (Key);
 
-        Command := Unbounded.To_Unbounded_String ("set " &
+        case Kind is
+            when Set =>
+                Command := Unbounded.To_Unbounded_String ("set ");
+            when others =>
+                raise Not_Implemented;
+        end case;
+
+        Unbounded.Append (Command,
+                    Unbounded.To_Unbounded_String (
                         Key &
                         Flags_Type'Image (Flags) &
                         Natural'Image (Expire_Since_Epoch) &
                         Natural'Image (Value'Length) &
                         CRLF &
-                        Append_CRLF (Value));
+                        Append_CRLF (Value)));
 
         if No_Reply then
             Unbounded.Append (Command,
@@ -376,7 +395,7 @@ package body Memcache is
         end if;
 
         return Unbounded.To_String (Command);
-    end Generate_Set;
+    end Generate_Store;
 
     function Generate_Get (Key : in String) return String is
     begin

@@ -2,8 +2,8 @@
 with AUnit.Test_Cases, AUnit.Assertions;
 use AUnit.Test_Cases, AUnit.Assertions;
 
-package body Memcache.Test.Set is
-    procedure Register_Tests (T : in out Set_Test) is
+package body Memcache.Test.Store is
+    procedure Register_Tests (T : in out Store_Test) is
         use AUnit.Test_Cases.Registration;
     begin
         Register_Routine (T, Test_Gen_Set'Access,
@@ -16,7 +16,7 @@ package body Memcache.Test.Set is
     end Register_Tests;
 
 
-    function Name (T : Set_Test) return AUnit.Message_String is
+    function Name (T : Store_Test) return AUnit.Message_String is
         pragma Unreferenced (T);
     begin
         return AUnit.Format ("Test `Memcache.Set` operations");
@@ -25,7 +25,8 @@ package body Memcache.Test.Set is
 
     procedure Test_Gen_Set (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : constant String := Generate_Set ("sets", "magicvalue", 0,
+        Command : constant String := Generate_Store (Memcache.Set,
+                                        "sets", "magicvalue", 0,
                                                 60.0, False);
         Expected : constant String := "set sets 0 60 10" &
                             ASCII.CR & ASCII.LF &
@@ -38,7 +39,8 @@ package body Memcache.Test.Set is
                       in out AUnit.Test_Cases.Test_Case'Class) is
         Some_Time : constant Ada.Calendar.Time :=
                             Ada.Calendar.Time_Of (1985, 11, 20);
-        Command : constant String := Generate_Set ("sets", "magicvalue", 0,
+        Command : constant String := Generate_Store (Memcache.Set,
+                                        "sets", "magicvalue", 0,
                                                 Some_Time, False);
         Expected : constant String := "set sets 0 501292800 10" &
                             ASCII.CR & ASCII.LF &
@@ -46,4 +48,4 @@ package body Memcache.Test.Set is
     begin
         Assert (Command = Expected, "Bad `set` command string");
     end Test_Gen_Set_Calendar;
-end Memcache.Test.Set;
+end Memcache.Test.Store;
