@@ -55,18 +55,17 @@ separate (Memcache)
             Block_Offset : Stream_Element_Count;
             --  The data to be read in the block should be of length
             --  Block_Length followed by the customary ASCII.CR and ASCII.LR
+            --  and finally the trailing "END\r\n" at the tail end of the block
             Block_Data   : Stream_Element_Array
-                                (1 .. Stream_Element_Count (Block_Length + 2));
+                                (1 .. Stream_Element_Count (Block_Length + 7));
             Block_Response : Unbounded.Unbounded_String;
         begin
             Read (Channel.all, Block_Data, Block_Offset);
-            for I in 1 .. (Block_Offset - 2) loop
+            for I in 1 .. (Block_Offset - 7) loop
                 Unbounded.Append (Block_Response,
                             Character'Val (Block_Data (I)));
             end loop;
             Reply.Data := Block_Response;
         end;
-
         return Reply;
-
     end Read_Get_Response;
