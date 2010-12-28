@@ -136,52 +136,55 @@ package body Memcache is
     end Delete;
 
 
-    function Increment (This : in Connection; Key : in String;
-                    Value : in Natural)
-                return Boolean is
+    procedure Increment (This : in Connection; Key : in String;
+                    Value : in Natural;
+                    Success : out Boolean) is
         Command : constant String := Generate_Incr (Key, Value, False);
     begin
+        Success := True;
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
             Response : constant String := Read_Response (This);
         begin
             if Response = Response_Not_Found then
-                return False;
+                Success := False;
+                return;
             end if;
         end;
-        return True;
     end Increment;
 
     procedure Increment (This : in Connection; Key : in String;
                     Value : in Natural) is
-        Unused : Boolean := Increment (This, Key, Value);
+        Unused : Boolean := False;
     begin
-        null;
+        Increment (This, Key, Value, Unused);
     end Increment;
 
-    function Decrement (This : in Connection; Key : in String;
-                    Value : in Natural)
-                return Boolean is
+    procedure Decrement (This : in Connection;
+                    Key : in String;
+                    Value : in Natural;
+                    Success : out Boolean) is
         Command : constant String := Generate_Decr (Key, Value, False);
     begin
+        Success := True;
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
         declare
             Response : constant String := Read_Response (This);
         begin
             if Response = Response_Not_Found then
-                return False;
+                Success := False;
+                return;
             end if;
         end;
-        return True;
     end Decrement;
 
     procedure Decrement (This : in Connection; Key : in String;
                     Value : in Natural) is
-        Unused : Boolean := Decrement (This, Key, Value);
+        Unused : Boolean := False;
     begin
-        null;
+        Decrement (This, Key, Value, Unused);
     end Decrement;
     --
     --  Stats from the memcached server come back in a relatively

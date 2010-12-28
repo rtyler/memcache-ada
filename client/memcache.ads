@@ -75,11 +75,13 @@ package Memcache is
     --
     --  Functions/procedures implementing the "incr" memcached
     --  command
-    function Increment (This : in Connection; Key : in String;
-                    Value : in Natural)
-                return Boolean;
-    procedure Increment (This : in Connection; Key : in String;
+    procedure Increment (This : in Connection;
+                    Key : in String;
                     Value : in Natural);
+    procedure Increment (This : in Connection;
+                    Key : in String;
+                    Value : in Natural;
+                    Success : out Boolean);
     --
     --
 
@@ -87,11 +89,13 @@ package Memcache is
     --
     --  Functions/procedures implementing the "decr" memcached
     --  command
-    function Decrement (This : in Connection; Key : in String;
-                    Value : in Natural)
-                return Boolean;
-    procedure Decrement (This : in Connection; Key : in String;
+    procedure Decrement (This : in Connection;
+                    Key : in String;
                     Value : in Natural);
+    procedure Decrement (This : in Connection;
+                    Key : in String;
+                    Value : in Natural;
+                    Success : out Boolean);
     --
     --
 
