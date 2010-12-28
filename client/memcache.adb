@@ -342,6 +342,14 @@ package body Memcache is
         case Kind is
             when Set =>
                 Command := Unbounded.To_Unbounded_String ("set ");
+            when Add =>
+                Command := Unbounded.To_Unbounded_String ("add ");
+            when Append =>
+                Command := Unbounded.To_Unbounded_String ("append ");
+            when Prepend =>
+                Command := Unbounded.To_Unbounded_String ("prepend ");
+            when Replace =>
+                Command := Unbounded.To_Unbounded_String ("replace ");
             when others =>
                 raise Not_Implemented;
         end case;

@@ -12,4 +12,12 @@ package Memcache.Test.Store is
                       in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Gen_Set_Calendar (T :
                       in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Gen_Add (T :
+                      in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Gen_Replace (T :
+                      in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Gen_Prepend (T :
+                      in out AUnit.Test_Cases.Test_Case'Class);
+    procedure Test_Gen_Append (T :
+                      in out AUnit.Test_Cases.Test_Case'Class);
 end Memcache.Test.Store;
