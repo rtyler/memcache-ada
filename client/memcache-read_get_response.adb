@@ -8,7 +8,7 @@ separate (Memcache)
         use GNAT.String_Split;
         use Ada.Streams;
         Channel : Stream_Access; -- From GNAT.Sockets
-        First_Line : Unbounded.Unbounded_String;
+        First_Line : SU.Unbounded_String;
         Offset : Stream_Element_Count;
         Data   : Stream_Element_Array (1 .. 1);
         Terminator : constant String := CRLF;
@@ -23,7 +23,7 @@ separate (Memcache)
         loop
             Read (Channel.all, Data, Offset);
             Read_Char := Character'Val (Data (1));
-            Unbounded.Append (First_Line, Read_Char);
+            SU.Append (First_Line, Read_Char);
 
             if Contains_String (First_Line, Terminator) then
                 exit;
@@ -35,7 +35,7 @@ separate (Memcache)
         --
         declare
             Subs : Slice_Set;
-            Buffer : constant String := Unbounded.To_String (First_Line);
+            Buffer : constant String := SU.To_String (First_Line);
             --  Adust the buffer to trim the trailing ASCII.CR and ASCII.LF
             Trimmed : constant String := Buffer (1 .. (Buffer'Last - 2));
         begin
@@ -58,11 +58,11 @@ separate (Memcache)
             --  and finally the trailing "END\r\n" at the tail end of the block
             Block_Data   : Stream_Element_Array
                                 (1 .. Stream_Element_Count (Block_Length + 7));
-            Block_Response : Unbounded.Unbounded_String;
+            Block_Response : SU.Unbounded_String;
         begin
             Read (Channel.all, Block_Data, Block_Offset);
             for I in 1 .. (Block_Offset - 7) loop
-                Unbounded.Append (Block_Response,
+                SU.Append (Block_Response,
                             Character'Val (Block_Data (I)));
             end loop;
             Reply.Data := Block_Response;

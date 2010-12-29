@@ -246,50 +246,48 @@ package body Memcache is
     function Generate_Delete (Key : in String;
                                 Delayed : in Expiration;
                                 No_Reply : in Boolean) return String is
-        Command : Unbounded.Unbounded_String;
+        Command : SU.Unbounded_String;
     begin
         Validate (Key);
 
-        Command := Unbounded.To_Unbounded_String ("delete " & Key);
+        Command := SU.To_Unbounded_String ("delete " & Key);
 
         if Delayed /= 0.0 then
-            Unbounded.Append (Command,
+            SU.Append (Command,
                     Natural'Image (Natural (Delayed)));
         end if;
 
         if No_Reply then
-            Unbounded.Append (Command,
-                Unbounded.To_Unbounded_String (" noreply"));
+            SU.Append (Command, Unbounded_No_Reply);
         end if;
 
-        return Append_CRLF (Unbounded.To_String (Command));
+        return Append_CRLF (SU.To_String (Command));
     end Generate_Delete;
 
     function Generate_Delete (Key : in String;
                                 Delayed : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String is
-        Command : Unbounded.Unbounded_String;
+        Command : SU.Unbounded_String;
         Delayed_Since_Epoch : constant Natural := Natural (Delayed - Epoch);
     begin
         Validate (Key);
 
-        Command := Unbounded.To_Unbounded_String ("delete " & Key);
+        Command := SU.To_Unbounded_String ("delete " & Key);
 
-        Unbounded.Append (Command, Natural'Image (Delayed_Since_Epoch));
+        SU.Append (Command, Natural'Image (Delayed_Since_Epoch));
 
         if No_Reply then
-            Unbounded.Append (Command,
-                Unbounded.To_Unbounded_String (" noreply"));
+            SU.Append (Command, Unbounded_No_Reply);
         end if;
 
-        return Append_CRLF (Unbounded.To_String (Command));
+        return Append_CRLF (SU.To_String (Command));
     end Generate_Delete;
 
 
     function Generate_Incr (Key : in String;
                                 Value : in Natural;
                                 No_Reply : in Boolean) return String is
-        Command : Unbounded.Unbounded_String;
+        Command : SU.Unbounded_String;
     begin
         Validate (Key);
 
@@ -297,22 +295,21 @@ package body Memcache is
         --  sign, since this is a Natural type, we won't have a preceding
         --  minus sign so we'll use that preceding space for formatting the
         --  command
-        Command := Unbounded.To_Unbounded_String ("incr " &
+        Command := SU.To_Unbounded_String ("incr " &
                     Key & Natural'Image (Value));
 
         if No_Reply then
-            Unbounded.Append (Command,
-                Unbounded.To_Unbounded_String (" noreply"));
+            SU.Append (Command, Unbounded_No_Reply);
         end if;
 
-        return Append_CRLF (Unbounded.To_String (Command));
+        return Append_CRLF (SU.To_String (Command));
     end Generate_Incr;
 
 
     function Generate_Decr (Key : in String;
                                 Value : in Natural;
                                 No_Reply : in Boolean) return String is
-        Command : Unbounded.Unbounded_String;
+        Command : SU.Unbounded_String;
     begin
         Validate (Key);
 
@@ -320,15 +317,14 @@ package body Memcache is
         --  sign, since this is a Natural type, we won't have a preceding
         --  minus sign so we'll use that preceding space for formatting the
         --  command
-        Command := Unbounded.To_Unbounded_String ("decr " &
+        Command := SU.To_Unbounded_String ("decr " &
                     Key & Natural'Image (Value));
 
         if No_Reply then
-            Unbounded.Append (Command,
-                Unbounded.To_Unbounded_String (" noreply"));
+            SU.Append (Command, Unbounded_No_Reply);
         end if;
 
-        return Append_CRLF (Unbounded.To_String (Command));
+        return Append_CRLF (SU.To_String (Command));
     end Generate_Decr;
 
 
@@ -338,24 +334,24 @@ package body Memcache is
                                 Flags : in Flags_Type;
                                 Expire : in Natural;
                                 No_Reply : in Boolean) return String is
-        Command : Unbounded.Unbounded_String;
+        Command : SU.Unbounded_String;
     begin
         Validate (Key);
 
         case Kind is
             when Set =>
-                Command := Unbounded.To_Unbounded_String ("set ");
+                Command := SU.To_Unbounded_String ("set ");
             when Add =>
-                Command := Unbounded.To_Unbounded_String ("add ");
+                Command := SU.To_Unbounded_String ("add ");
             when Append =>
-                Command := Unbounded.To_Unbounded_String ("append ");
+                Command := SU.To_Unbounded_String ("append ");
             when Prepend =>
-                Command := Unbounded.To_Unbounded_String ("prepend ");
+                Command := SU.To_Unbounded_String ("prepend ");
             when Replace =>
-                Command := Unbounded.To_Unbounded_String ("replace ");
+                Command := SU.To_Unbounded_String ("replace ");
         end case;
 
-        Unbounded.Append (Command, Unbounded.To_Unbounded_String (
+        SU.Append (Command, SU.To_Unbounded_String (
                         Key &
                         Flags_Type'Image (Flags) &
                         Natural'Image (Expire) &
@@ -364,11 +360,10 @@ package body Memcache is
                         Append_CRLF (Value)));
 
         if No_Reply then
-            Unbounded.Append (Command,
-                Unbounded.To_Unbounded_String (" noreply"));
+            SU.Append (Command, Unbounded_No_Reply);
         end if;
 
-        return Unbounded.To_String (Command);
+        return SU.To_String (Command);
     end Generate_Store;
 
     function Generate_Store (Kind : in Store_Commands;
@@ -422,7 +417,7 @@ package body Memcache is
         use GNAT.Sockets;
         use Ada.Streams;
         Channel : Stream_Access; -- From GNAT.Sockets
-        Response : Unbounded.Unbounded_String;
+        Response : SU.Unbounded_String;
         Offset : Stream_Element_Count;
         Data   : Stream_Element_Array (1 .. 1);
         R_Length : Natural;
@@ -432,20 +427,20 @@ package body Memcache is
         loop
             Read (Channel.all, Data, Offset);
             Read_Char := Character'Val (Data (1));
-            Unbounded.Append (Response, Read_Char);
+            SU.Append (Response, Read_Char);
 
             if Contains_String (Response, Terminator) then
                 exit;
             end if;
         end loop;
 
-        R_Length := Unbounded.Length (Response);
+        R_Length := SU.Length (Response);
 
         if Trim_CRLF then
             --  Return the string with the CR + LF sliced off the end
-            return Unbounded.Slice (Response, 1, R_Length - 2);
+            return SU.Slice (Response, 1, R_Length - 2);
         else
-            return Unbounded.To_String (Response);
+            return SU.To_String (Response);
         end if;
     end Read_Until;
 
@@ -457,7 +452,7 @@ package body Memcache is
     function Read_Get_Response (Conn : in Connection)
                     return Response is separate;
 
-    function Contains_String (Haystack : in Unbounded.Unbounded_String;
+    function Contains_String (Haystack : in SU.Unbounded_String;
                     Needle : in String) return Boolean is separate;
     function Append_CRLF (Input : in String) return String is
     begin

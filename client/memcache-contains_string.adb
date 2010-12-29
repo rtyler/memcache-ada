@@ -1,9 +1,9 @@
 separate (Memcache)
-    function Contains_String (Haystack : in Unbounded.Unbounded_String;
+    function Contains_String (Haystack : in SU.Unbounded_String;
                     Needle : in String) return Boolean is
-        R_Length : constant Natural := Unbounded.Length (Haystack);
+        R_Length : constant Natural := SU.Length (Haystack);
         T_Length : constant Natural := Needle'Length;
-        R_Last_Char : constant Character := Unbounded.Element
+        R_Last_Char : constant Character := SU.Element
                                                 (Haystack, R_Length);
         T_Last_Char : constant Character := Needle (Needle'Last);
     begin
@@ -18,7 +18,7 @@ separate (Memcache)
         end if;
 
         declare
-            Sub : constant String := Unbounded.Slice
+            Sub : constant String := SU.Slice
                 (Haystack, R_Length - (T_Length - 1), R_Length);
         begin
             if Needle = Sub then

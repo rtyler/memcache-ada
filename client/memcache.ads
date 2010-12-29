@@ -12,8 +12,8 @@ with GNAT.Sockets;
 private with Ada.Characters.Latin_1;
 
 package Memcache is
-    package Unbounded renames Ada.Strings.Unbounded;
-    use type Unbounded.Unbounded_String;
+    package SU renames Ada.Strings.Unbounded;
+    use type SU.Unbounded_String;
 
     --
     --  When passing an expiration, it must be within this range
@@ -24,7 +24,7 @@ package Memcache is
 
     type Response is record
         Flags : Flags_Type;
-        Data : Unbounded.Unbounded_String;
+        Data : SU.Unbounded_String;
     end record;
 
     type Connection is tagged private;
@@ -130,6 +130,8 @@ private
 
     CRLF : constant String := Ada.Characters.Latin_1.CR &
                                 Ada.Characters.Latin_1.LF;
+    Unbounded_No_Reply : constant SU.Unbounded_String :=
+                            SU.To_Unbounded_String (" noreply");
 
     type Connection is tagged record
         Sock : GNAT.Sockets.Socket_Type;
@@ -199,7 +201,7 @@ private
     function Read_Response (Conn : in Connection) return String;
     function Read_Get_Response (Conn : in Connection) return Response;
 
-    function Contains_String (Haystack : in Unbounded.Unbounded_String;
+    function Contains_String (Haystack : in SU.Unbounded_String;
                     Needle : in String) return Boolean;
 
     --
