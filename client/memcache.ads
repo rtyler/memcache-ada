@@ -29,9 +29,19 @@ package Memcache is
 
     type Connection is tagged private;
 
+    --
+    --  `Get` a key's value in the form of a `Response` record, which contains
+    --  the Flags and the value "data" inside the `Data` member. The end-user
+    --  is responsible for parsing that into whatever format makes the most
+    --  sense
     function Get (This : in Connection; Key : in String)
                 return Response;
 
+    --
+    --  `Set` a key-value pair in memcached, if no `Expire` parameter is passed
+    --  along with the call then the server will cache the key
+    --  "indefinitely" (in effect, until the server is shut down or
+    --  starts to run out of memory to cache other items
     function Set (This : in Connection;
                     Key : in String;
                     Value : in String;
@@ -53,21 +63,24 @@ package Memcache is
                 return Boolean;
 
     --
-    --  Functions/procedures implementing the "delete" memcached
-    --  command
+    --  `Delete` a key-value pair in memcached, with an optional `Delayed`
+    --  parameter which instructs the server to delete after either
+    --  N seconds (in case of an `Expiration` or at the specified
+    --  unix timestamp in case of an `Ada.Calendar.Time`
+    --
+    --  The `Success` out parameter will indicate `True` if the value was
+    --  deleted, if the value does not exist however it will
+    --  indicate `False`
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0.0);
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0.0;
                     Success : out Boolean);
-
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time);
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time;
                     Success : out Boolean);
-    --
-    --
 
 
     --
@@ -150,7 +163,9 @@ private
     --  disconnected, will raise `Not_Connected` if it has
     procedure Is_Connected (C : in Connection);
 
-
+    --
+    --  Internal procedure to actually execute a deletion command and check for
+    --  the expected results on the wire
     procedure Exec_Delete (This : in Connection;
                             Command : in String;
                             Success : out Boolean);
