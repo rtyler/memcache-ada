@@ -71,17 +71,16 @@ package Memcache is
 
 
     --
-    --  Functions/procedures implementing the "incr" memcached
-    --  command
+    --  `Increment` the value for a key in memcached, the server will assume
+    --  the type of the value to be a 64-bit integer and increment it the
+    --  desired `Value` passed
     procedure Increment (This : in Connection;
                     Key : in String;
                     Value : in Natural);
     procedure Increment (This : in Connection;
                     Key : in String;
                     Value : in Natural;
-                    Success : out Boolean);
-    --
-    --
+                    Result : out Natural);
 
 
     --
