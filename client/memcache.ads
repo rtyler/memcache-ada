@@ -55,19 +55,17 @@ package Memcache is
     --
     --  Functions/procedures implementing the "delete" memcached
     --  command
-    function Delete (This : in Connection; Key : in String;
-                    Delayed : in Expiration := 0.0)
-                return Boolean;
-
-    function Delete (This : in Connection; Key : in String;
-                    Delayed : in Ada.Calendar.Time)
-                return Boolean;
-
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0.0);
+    procedure Delete (This : in Connection; Key : in String;
+                    Delayed : in Expiration := 0.0;
+                    Success : out Boolean);
 
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time);
+    procedure Delete (This : in Connection; Key : in String;
+                    Delayed : in Ada.Calendar.Time;
+                    Success : out Boolean);
     --
     --
 
@@ -154,10 +152,16 @@ private
     procedure Is_Connected (C : in Connection);
 
 
+    procedure Exec_Delete (This : in Connection;
+                            Command : in String;
+                            Success : out Boolean);
     --
     --  Generation functions, used to generate the actual text
     --  representations of commands to be sent over the wire to
     --  the memcached server
+    function Generate_Delete (Key : in String;
+                                Delayed : in Natural;
+                                No_Reply : in Boolean) return String;
     function Generate_Delete (Key : in String;
                                 Delayed : in Expiration;
                                 No_Reply : in Boolean) return String;
@@ -165,11 +169,14 @@ private
                                 Delayed : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String;
 
+
     function Generate_Incr (Key : in String; Value : in Natural;
                                 No_Reply : in Boolean) return String;
 
+
     function Generate_Decr (Key : in String; Value : in Natural;
                                 No_Reply : in Boolean) return String;
+
 
     function Generate_Store (Kind : in Store_Commands;
                                 Key : in String;
@@ -177,20 +184,19 @@ private
                                 Flags : in Flags_Type;
                                 Expire : in Natural;
                                 No_Reply : in Boolean) return String;
-
     function Generate_Store (Kind : in Store_Commands;
                                 Key : in String;
                                 Value : in String;
                                 Flags : in Flags_Type;
                                 Expire : in Expiration;
                                 No_Reply : in Boolean) return String;
-
     function Generate_Store (Kind : in Store_Commands;
                                 Key : in String;
                                 Value : in String;
                                 Flags : in Flags_Type;
                                 Expire : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String;
+
 
     function Generate_Get (Key : in String) return String;
 

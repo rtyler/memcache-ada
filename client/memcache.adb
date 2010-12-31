@@ -94,46 +94,66 @@ package body Memcache is
     end Set;
 
 
-    function Delete (This : in Connection; Key : in String;
-                    Delayed : in Expiration := 0.0)
-                return Boolean is
-        Command : constant String := Generate_Delete (Key, Delayed, False);
+
+    --
+    --  DELETE PROCEDURES
+    --
+    procedure Exec_Delete (This : in Connection;
+                            Command : in String;
+                            Success : out Boolean) is
     begin
+        Success := False;
         Is_Connected (This);
         Write_Command (Conn => This, Command => Command);
+
         declare
             Response : constant String := Read_Response (This);
         begin
             if Response = Response_Deleted then
-                return True;
+                Success := True;
+                return;
             elsif Response = Response_Not_Found then
-                return False;
+                return;
             else
                 raise Unexpected_Response;
             end if;
         end;
+    end Exec_Delete;
+
+    procedure Delete (This : in Connection;
+                    Key : in String;
+                    Delayed : in Expiration := 0.0;
+                    Success : out Boolean) is
+        Command : constant String := Generate_Delete (Key, Delayed, False);
+    begin
+        Exec_Delete (This, Command, Success);
     end Delete;
 
-    function Delete (This : in Connection; Key : in String;
-                    Delayed : in Ada.Calendar.Time)
-                return Boolean is
+    procedure Delete (This : in Connection;
+                    Key : in String;
+                    Delayed : in Ada.Calendar.Time;
+                    Success : out Boolean) is
+        Command : constant String := Generate_Delete (Key, Delayed, False);
     begin
-        raise Not_Implemented;
-        return False;
+        Exec_Delete (This, Command, Success);
     end Delete;
 
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Expiration := 0.0) is
-        Unused : constant Boolean := Delete (This, Key, Delayed);
+        Unused : Boolean;
     begin
-        null;
+        Delete (This, Key, Delayed, Unused);
     end Delete;
 
     procedure Delete (This : in Connection; Key : in String;
                     Delayed : in Ada.Calendar.Time) is
+        Unused : Boolean;
     begin
-        raise Not_Implemented;
+        Delete (This, Key, Delayed, Unused);
     end Delete;
+    --
+    --  DELETE PROCEDURES
+    --
 
 
     procedure Increment (This : in Connection; Key : in String;
@@ -244,7 +264,7 @@ package body Memcache is
     end Is_Connected;
 
     function Generate_Delete (Key : in String;
-                                Delayed : in Expiration;
+                                Delayed : in Natural;
                                 No_Reply : in Boolean) return String is
         Command : SU.Unbounded_String;
     begin
@@ -252,9 +272,9 @@ package body Memcache is
 
         Command := SU.To_Unbounded_String ("delete " & Key);
 
-        if Delayed /= 0.0 then
+        if Delayed /= 0 then
             SU.Append (Command,
-                    Natural'Image (Natural (Delayed)));
+                    Natural'Image (Delayed));
         end if;
 
         if No_Reply then
@@ -265,22 +285,19 @@ package body Memcache is
     end Generate_Delete;
 
     function Generate_Delete (Key : in String;
+                                Delayed : in Expiration;
+                                No_Reply : in Boolean) return String is
+        Natural_Expire : constant Natural := Natural (Delayed);
+    begin
+        return Generate_Delete (Key, Natural_Expire, No_Reply);
+    end Generate_Delete;
+
+    function Generate_Delete (Key : in String;
                                 Delayed : in Ada.Calendar.Time;
                                 No_Reply : in Boolean) return String is
-        Command : SU.Unbounded_String;
         Delayed_Since_Epoch : constant Natural := Natural (Delayed - Epoch);
     begin
-        Validate (Key);
-
-        Command := SU.To_Unbounded_String ("delete " & Key);
-
-        SU.Append (Command, Natural'Image (Delayed_Since_Epoch));
-
-        if No_Reply then
-            SU.Append (Command, Unbounded_No_Reply);
-        end if;
-
-        return Append_CRLF (SU.To_String (Command));
+        return Generate_Delete (Key, Delayed_Since_Epoch, No_Reply);
     end Generate_Delete;
 
 
