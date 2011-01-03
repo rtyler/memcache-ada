@@ -12,6 +12,33 @@ said, the library is not very well documented just yet. The source code in the `
 directory is fairly straight-forward, so I suggest consulting that if you have any
 questions
 
+#### Implemented Calls
+
+    +----------------------------------------------------------+
+    |    Name      |  Status  |           Notes                |
+    +----------------------------------------------------------+
+    | get          |  y       |                                |
+    | gets         |  n       |                                |
+    +--------------+-------------------------------------------+
+    | set          |  y       |                                |
+    | add          |  y       |                                |
+    | replace      |  y       |                                |
+    | append       |  y       |                                |
+    | prepend      |  y       |                                |
+    | cas          |  n       |                                |
+    +--------------+-------------------------------------------+
+    | delete       |  y       |                                |
+    +--------------+-------------------------------------------+
+    | incr         |  y       |                                |
+    | decr         |  y*      | decremented value not returned |
+    +--------------+-------------------------------------------+
+    | stats        |  y       |                                |
+    | stats (args) |  n       |                                |
+    | flush_all    |  y*      | delayed flush not supported    |
+    | version      |  y       |                                |
+    | verbosity    |  n       | no plans to support            |
+    | quit         |  n       | no plans to support            |
+    +--------------+-------------------------------------------+
 
 Warnings
 --------
