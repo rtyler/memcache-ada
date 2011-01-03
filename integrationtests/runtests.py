@@ -5,7 +5,7 @@ import subprocess
 
 
 def main():
-    for dname in os.listdir('.'):
+    for dname in sorted(os.listdir('.')):
         if not os.path.isdir(dname):
             continue
         print
