@@ -203,6 +203,12 @@ package body Memcache is
     end Decrement;
 
 
+    procedure Decrement (This : in Connection; Key : in String;
+                    Value : in Natural) is
+        Unused : Boolean := False;
+    begin
+        Decrement (This, Key, Value, Unused);
+    end Decrement;
 
     procedure Flush_All (This : in Connection) is
     begin
@@ -234,12 +240,6 @@ package body Memcache is
 
 
 
-    procedure Decrement (This : in Connection; Key : in String;
-                    Value : in Natural) is
-        Unused : Boolean := False;
-    begin
-        Decrement (This, Key, Value, Unused);
-    end Decrement;
     --
     --  Stats from the memcached server come back in a relatively
     --  unstructured format, so this function will just dump to stdout
