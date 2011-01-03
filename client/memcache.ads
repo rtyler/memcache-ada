@@ -27,6 +27,16 @@ package Memcache is
         Data : SU.Unbounded_String;
     end record;
 
+    --
+    --  Exceptions that could be raised by the public methods defined in
+    --  memcache.adb
+    Invalid_Key_Error : exception;
+    Unexpected_Response : exception;
+    Invalid_Connection : exception;
+    Not_Implemented : exception;
+    Not_Connected : exception;
+
+
     type Connection is tagged private;
 
     --
@@ -120,14 +130,6 @@ package Memcache is
 
     procedure Connect (Conn : in out Connection);
     procedure Disconnect (Conn : in out Connection);
-
-    --
-    --  Memcache client exceptions
-    Invalid_Key_Error : exception;
-    Unexpected_Response : exception;
-    Invalid_Connection : exception;
-    Not_Implemented : exception;
-    Not_Connected : exception;
 
 private
 
