@@ -28,7 +28,8 @@ begin
     C.Connect;
     for Index in Integer range 1 .. 10 loop
         declare
-            SIndex : constant String := SF.Trim (Integer'Image (Index), Ada.Strings.Both);
+            SIndex : constant String := SF.Trim (Integer'Image (Index),
+                                                Ada.Strings.Both);
             RC : Boolean := False;
         begin
             Put_Line ("Setting a key/value pair: " & SIndex & "/" & SIndex);

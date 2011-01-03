@@ -4,6 +4,7 @@ private with Ada.Calendar;
 private with Ada.Characters.Handling;
 private with Ada.Streams;
 private with Ada.Text_IO;
+private with GNAT.String_Split;
 
 use type Ada.Streams.Stream_Element_Count;
 use type Ada.Calendar.Time;
@@ -200,6 +201,38 @@ package body Memcache is
             end if;
         end;
     end Decrement;
+
+
+
+    procedure Flush_All (This : in Connection) is
+    begin
+        Is_Connected (This);
+        Write_Command (Conn => This, Command => Flush_All_Command);
+    end Flush_All;
+
+
+
+    function Version (This : in Connection) return String is
+    begin
+        Is_Connected (This);
+        Write_Command (Conn => This, Command => Version_Command);
+        declare
+            use GNAT.String_Split;
+            Response : constant String := Read_Response (This);
+            Pieces : Slice_Set;
+        begin
+            --  GNAT.String_Split.Create
+            Create (Pieces, Response, " ", Mode => Multiple);
+
+            --
+            --  The Response we get from the server is in the form of "VERSION
+            --  x.x.x", we only want the last bit so we need to chop it up
+            --
+            return String (Slice (Pieces, 2));
+        end;
+    end Version;
+
+
 
     procedure Decrement (This : in Connection; Key : in String;
                     Value : in Natural) is

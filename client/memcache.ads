@@ -116,8 +116,16 @@ package Memcache is
                     Key : in String;
                     Value : in Natural;
                     Success : out Boolean);
+
+
     --
+    --  The `Flush_All` method will mark **all** items in the memcached server
+    --  as expired, effectively flushing all items cached
+    procedure Flush_All (This : in Connection);
+
     --
+    --  `Version` will return the version string the server responds with
+    function Version (This : in Connection) return String;
 
 
     --
@@ -144,6 +152,9 @@ private
                                 Ada.Characters.Latin_1.LF;
     Unbounded_No_Reply : constant SU.Unbounded_String :=
                             SU.To_Unbounded_String (" noreply");
+    Flush_All_Command : constant String :=
+                            "flush_all noreply" & CRLF;
+    Version_Command : constant String := "version" & CRLF;
 
     type Connection is tagged record
         Sock : GNAT.Sockets.Socket_Type;
