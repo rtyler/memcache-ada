@@ -11,8 +11,13 @@ procedure Decrementer is
     C : Memcache.Connection :=
             Memcache.Create (Host => "127.0.0.1",
                             Port => Memcache.Port_Type'Value (Port));
+    Result : Natural;
 begin
     C.Connect;
-    C.Decrement ("decrementer", 1);
+    C.Decrement ("decrementer", 1, Result);
     C.Disconnect;
+
+    if Result /= 9 then
+        Ada.Command_Line.Set_Exit_Status (1);
+    end if;
 end Decrementer;

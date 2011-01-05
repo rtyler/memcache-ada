@@ -30,7 +30,7 @@ questions
     | delete       |  y       |                                |
     +--------------+-------------------------------------------+
     | incr         |  y       |                                |
-    | decr         |  y*      | decremented value not returned |
+    | decr         |  y       |                                |
     +--------------+-------------------------------------------+
     | stats        |  y       |                                |
     | stats (args) |  n       |                                |

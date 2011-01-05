@@ -115,7 +115,7 @@ package Memcache is
     procedure Decrement (This : in Connection;
                     Key : in String;
                     Value : in Natural;
-                    Success : out Boolean);
+                    Result : out Natural);
 
 
     --
