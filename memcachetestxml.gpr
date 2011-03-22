@@ -1,7 +1,8 @@
 with "aunit";
+with "memcache";
 
 project MemcacheTest is
-    for Source_Dirs use ("tests/harness", "client", "tests/scenarios");
+    for Source_Dirs use ("tests/harness", "tests/scenarios");
     for Main use ("xmlrunner.adb");
     for Object_Dir use "build";
     for Exec_Dir use ".";

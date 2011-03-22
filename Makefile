@@ -5,27 +5,30 @@ GPRBUILD=gprbuild
 GPRCLEAN=gprclean
 TESTRUNNER=testrunner
 
-lib:
+pre:
 	mkdir -p build
+	mkdir -p obj
+
+lib: pre
 	$(GPRBUILD) -p memcache.gpr
 
-syntax:
-	mkdir -p build
+syntax: pre
 	gnatmake -gnatc -gnat05 -P memcache.gpr
 	gnatmake -gnatc -gnat05 -P memcachetest.gpr
 
-test: syntax
+test: pre lib syntax
 	$(GPRBUILD) -p memcachetest.gpr
 	$(GPRBUILD) -p memcachetestxml.gpr
 	./$(TESTRUNNER)
 
-inttest: syntax lib test
+inttest: pre syntax lib test
 	(cd integrationtests && python buildtests.py)
 	(cd integrationtests && python runtests.py)
 
-clean:
+clean: pre
 	$(GPRCLEAN) memcache.gpr
 	$(GPRCLEAN) memcachetest.gpr
 	(cd integrationtests && python clean.py)
-	rm -rf build
+	rm -rf build ob
 	rm -f $(TESTRUNNER)
+	rm -f *.so*

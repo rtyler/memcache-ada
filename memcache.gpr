@@ -1,12 +1,25 @@
 
-project Memcache is
+Library project Memcache is
+    Version := "1.0.0";
+
+    type Mode_Type is ("debug", "release");
+    Mode : Mode_Type := external ("mode", "debug");
+
     for Source_Dirs use ("client");
-    for Object_Dir use "build";
-    for Exec_Dir use ".";
+
+    for Object_Dir use "obj";
+    for Library_Dir use "build";
+    for Library_Kind use "dynamic";
+    for Library_Name use "memcache";
+    for Library_Version use "libmemcache.so." & Version;
 
     package Compiler is
-    for Default_Switches("ada") use
-            ("-O2", "-gnat05");
+        case Mode is
+            when "debug" =>
+                for Switches ("Ada") use ("-g", "-gnat05");
+            when "release" =>
+                for Switches ("Ada") use ("-O2", "-gnat05");
+        end case;
     end Compiler;
 end Memcache;
 
