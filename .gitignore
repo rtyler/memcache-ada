@@ -1,5 +1,7 @@
 *.ali
 *.o
+*.so
 build
+obj
 testrunner
 xmlrunner
