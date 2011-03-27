@@ -1,6 +1,7 @@
+with "../../memcache";
 
 project Getter is
-    for Source_Dirs use (".", "../../client");
+    for Source_Dirs use (".");
     for Object_Dir use "build";
     for Main use ("getter.adb");
     for Exec_Dir use ".";
