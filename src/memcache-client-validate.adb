@@ -1,4 +1,4 @@
-separate (Memcache)
+separate (Memcache.Client)
     procedure Validate (Key : in String) is
     begin
         --  A key must be between 1 and 250 characters in length

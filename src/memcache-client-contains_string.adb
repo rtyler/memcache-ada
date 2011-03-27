@@ -1,4 +1,4 @@
-separate (Memcache)
+separate (Memcache.Client)
     function Contains_String (Haystack : in SU.Unbounded_String;
                     Needle : in String) return Boolean is
         R_Length : constant Natural := SU.Length (Haystack);

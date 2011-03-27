@@ -1,8 +1,8 @@
-private with GNAT.Sockets;
-private with GNAT.String_Split;
-private with Ada.Streams;
+with GNAT.Sockets;
+with GNAT.String_Split;
+with Ada.Streams;
 
-separate (Memcache)
+separate (Memcache.Client)
     function Read_Get_Response (Conn : in Connection) return Response is
         use GNAT.Sockets;
         use GNAT.String_Split;

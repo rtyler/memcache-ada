@@ -9,7 +9,7 @@ private with GNAT.String_Split;
 use type Ada.Streams.Stream_Element_Count;
 use type Ada.Calendar.Time;
 
-package body Memcache is
+package body Memcache.Client is
     function Create (Host : in String; Port : in Port_Type)
                 return Connection is
         C : Connection;
@@ -485,5 +485,5 @@ package body Memcache is
     begin
         return Input & CRLF;
     end Append_CRLF;
-end Memcache;
+end Memcache.Client;
 
