@@ -5,12 +5,12 @@ GPRBUILD=gprbuild
 GPRCLEAN=gprclean
 TESTRUNNER=testrunner
 
+lib: pre
+	$(GPRBUILD) -p memcache.gpr
+
 pre:
 	mkdir -p build
 	mkdir -p obj
-
-lib: pre
-	$(GPRBUILD) -p memcache.gpr
 
 syntax: pre
 	gnatmake -gnatc -gnat05 -P memcache.gpr
@@ -32,3 +32,4 @@ clean: pre
 	rm -rf build ob
 	rm -f $(TESTRUNNER)
 	rm -f *.so*
+
