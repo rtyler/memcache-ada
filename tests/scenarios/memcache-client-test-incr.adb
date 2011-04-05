@@ -2,7 +2,7 @@
 with AUnit.Test_Cases, AUnit.Assertions;
 use AUnit.Test_Cases, AUnit.Assertions;
 
-package body Memcache.Test.Incr is
+package body Memcache.Client.Test.Incr is
     procedure Register_Tests (T : in out Incr_Test) is
         use AUnit.Test_Cases.Registration;
     begin
@@ -26,7 +26,7 @@ package body Memcache.Test.Incr is
 
     procedure Test_Gen_Incr (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : String := Memcache.Generate_Incr ("GoodKey", 100, False);
+        Command : String := Memcache.Client.Generate_Incr ("GoodKey", 100, False);
         Expected : String := Append_CRLF ("incr GoodKey 100");
     begin
         Assert (Command = Expected, "Bad command string");
@@ -35,7 +35,7 @@ package body Memcache.Test.Incr is
 
     procedure Test_Gen_Incr_No_Reply (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : String := Memcache.Generate_Incr ("GoodKey", 100, True);
+        Command : String := Memcache.Client.Generate_Incr ("GoodKey", 100, True);
         Expected : String := Append_CRLF ("incr GoodKey 100 noreply");
     begin
         Assert (Command = Expected, "Bad command string");
@@ -46,7 +46,7 @@ package body Memcache.Test.Incr is
                       in out AUnit.Test_Cases.Test_Case'Class) is
     begin
         declare
-            Command : String := Memcache.Generate_Incr ("Bad Key", 0, False);
+            Command : String := Memcache.Client.Generate_Incr ("Bad Key", 0, False);
         begin
             Assert (False, "Should have raised an Invalid_Key_Error");
         end;
@@ -54,4 +54,4 @@ package body Memcache.Test.Incr is
         when Invalid_Key_Error =>
             Assert (True, "Properly raised Invalid_Key_Error");
     end Test_Gen_Incr_Bad_Key;
-end Memcache.Test.Incr;
+end Memcache.Client.Test.Incr;

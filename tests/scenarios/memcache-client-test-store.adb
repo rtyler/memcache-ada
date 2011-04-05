@@ -2,7 +2,7 @@
 with AUnit.Test_Cases, AUnit.Assertions;
 use AUnit.Test_Cases, AUnit.Assertions;
 
-package body Memcache.Test.Store is
+package body Memcache.Client.Test.Store is
     procedure Register_Tests (T : in out Store_Test) is
         use AUnit.Test_Cases.Registration;
     begin
@@ -37,7 +37,7 @@ package body Memcache.Test.Store is
 
     procedure Test_Gen_Set (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : constant String := Generate_Store (Memcache.Set,
+        Command : constant String := Generate_Store (Memcache.Client.Set,
                                         "sets", "magicvalue", 0,
                                                 60.0, False);
         Expected : constant String := "set sets 0 60 10" &
@@ -51,7 +51,7 @@ package body Memcache.Test.Store is
                       in out AUnit.Test_Cases.Test_Case'Class) is
         Some_Time : constant Ada.Calendar.Time :=
                             Ada.Calendar.Time_Of (1985, 11, 20);
-        Command : constant String := Generate_Store (Memcache.Set,
+        Command : constant String := Generate_Store (Memcache.Client.Set,
                                         "sets", "magicvalue", 0,
                                                 Some_Time, False);
         Expected : constant String := "set sets 0 501292800 10" &
@@ -64,7 +64,7 @@ package body Memcache.Test.Store is
 
     procedure Test_Gen_Add (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : constant String := Generate_Store (Memcache.Add,
+        Command : constant String := Generate_Store (Memcache.Client.Add,
                                         "sets", "magicvalue", 0,
                                                 60.0, False);
         Expected : constant String := "add sets 0 60 10" &
@@ -77,7 +77,7 @@ package body Memcache.Test.Store is
 
     procedure Test_Gen_Replace (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : constant String := Generate_Store (Memcache.Replace,
+        Command : constant String := Generate_Store (Memcache.Client.Replace,
                                         "sets", "magicvalue", 0,
                                                 60.0, False);
         Expected : constant String := "replace sets 0 60 10" &
@@ -90,7 +90,7 @@ package body Memcache.Test.Store is
 
     procedure Test_Gen_Append (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : constant String := Generate_Store (Memcache.Append,
+        Command : constant String := Generate_Store (Memcache.Client.Append,
                                         "sets", "magicvalue", 0,
                                                 60.0, False);
         Expected : constant String := "append sets 0 60 10" &
@@ -103,7 +103,7 @@ package body Memcache.Test.Store is
 
     procedure Test_Gen_Prepend (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : constant String := Generate_Store (Memcache.Prepend,
+        Command : constant String := Generate_Store (Memcache.Client.Prepend,
                                         "sets", "magicvalue", 0,
                                                 60.0, False);
         Expected : constant String := "prepend sets 0 60 10" &
@@ -113,4 +113,4 @@ package body Memcache.Test.Store is
         Assert (Command = Expected, "Bad `prepend` command string");
     end Test_Gen_Prepend;
 
-end Memcache.Test.Store;
+end Memcache.Client.Test.Store;

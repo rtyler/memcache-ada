@@ -2,7 +2,7 @@
 with AUnit;
 with AUnit.Test_Cases;
 
-package Memcache.Test is
+package Memcache.Client.Test is
     type Client_Test is new AUnit.Test_Cases.Test_Case with null record;
 
     procedure Register_Tests (T : in out Client_Test);
@@ -22,4 +22,4 @@ package Memcache.Test is
     procedure Test_Validate_Newline_Key (T :
                     in out AUnit.Test_Cases.Test_Case'Class);
 
-end Memcache.Test;
+end Memcache.Client.Test;

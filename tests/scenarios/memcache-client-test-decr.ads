@@ -2,7 +2,7 @@
 with AUnit;
 with AUnit.Test_Cases;
 
-package Memcache.Test.Decr is
+package Memcache.Client.Test.Decr is
     type Decr_Test is new AUnit.Test_Cases.Test_Case with null record;
 
     procedure Register_Tests (T : in out Decr_Test);
@@ -14,5 +14,5 @@ package Memcache.Test.Decr is
                       in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Gen_Decr_Bad_Key (T :
                       in out AUnit.Test_Cases.Test_Case'Class);
-end Memcache.Test.Decr;
+end Memcache.Client.Test.Decr;
 

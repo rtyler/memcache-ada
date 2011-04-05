@@ -2,7 +2,7 @@
 with AUnit;
 with AUnit.Test_Cases;
 
-package Memcache.Test.Store is
+package Memcache.Client.Test.Store is
     type Store_Test is new AUnit.Test_Cases.Test_Case with null record;
 
     procedure Register_Tests (T : in out Store_Test);
@@ -20,4 +20,4 @@ package Memcache.Test.Store is
                       in out AUnit.Test_Cases.Test_Case'Class);
     procedure Test_Gen_Append (T :
                       in out AUnit.Test_Cases.Test_Case'Class);
-end Memcache.Test.Store;
+end Memcache.Client.Test.Store;

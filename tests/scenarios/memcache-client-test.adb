@@ -2,7 +2,7 @@
 with AUnit.Test_Cases, AUnit.Assertions;
 use AUnit.Test_Cases, AUnit.Assertions;
 
-package body Memcache.Test is
+package body Memcache.Client.Test is
     procedure Register_Tests (T : in out Client_Test) is
         use AUnit.Test_Cases.Registration;
     begin
@@ -35,7 +35,7 @@ package body Memcache.Test is
     procedure Test_Validate_Empty_Key (T :
                     in out AUnit.Test_Cases.Test_Case'Class) is
     begin
-        Memcache.Validate ("");
+        Memcache.Client.Validate ("");
         Assert (False, "Should have raised an Invalid_Key_Error");
     exception
         when Invalid_Key_Error =>
@@ -53,7 +53,7 @@ package body Memcache.Test is
                              "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" &
                              "xxxxxxx";
     begin
-        Memcache.Validate (Long_Key);
+        Memcache.Client.Validate (Long_Key);
         Assert (False, "Should have raised an Invalid_Key_Error");
     exception
         when Invalid_Key_Error =>
@@ -64,7 +64,7 @@ package body Memcache.Test is
     procedure Test_Validate_Space_Key (T :
                     in out AUnit.Test_Cases.Test_Case'Class) is
     begin
-        Memcache.Validate ("Bad Key");
+        Memcache.Client.Validate ("Bad Key");
         Assert (False, "Should have raised an Invalid_Key_Error");
     exception
         when Invalid_Key_Error =>
@@ -75,7 +75,7 @@ package body Memcache.Test is
     procedure Test_Validate_Space_End_Key (T :
                     in out AUnit.Test_Cases.Test_Case'Class) is
     begin
-        Memcache.Validate ("BadKey ");
+        Memcache.Client.Validate ("BadKey ");
         Assert (False, "Should have raised an Invalid_Key_Error");
     exception
         when Invalid_Key_Error =>
@@ -86,7 +86,7 @@ package body Memcache.Test is
     procedure Test_Validate_Tab_Key (T :
                     in out AUnit.Test_Cases.Test_Case'Class) is
     begin
-        Memcache.Validate ("Bad" & Character'Val (9));
+        Memcache.Client.Validate ("Bad" & Character'Val (9));
         Assert (False, "Should have raised an Invalid_Key_Error");
     exception
         when Invalid_Key_Error =>
@@ -97,10 +97,10 @@ package body Memcache.Test is
     procedure Test_Validate_Newline_Key (T :
                     in out AUnit.Test_Cases.Test_Case'Class) is
     begin
-        Memcache.Validate ("Bad" & Character'Val (10));
+        Memcache.Client.Validate ("Bad" & Character'Val (10));
         Assert (False, "Should have raised an Invalid_Key_Error");
     exception
         when Invalid_Key_Error =>
             Assert (True, "Properly raised Invalid_Key_Error");
     end Test_Validate_Newline_Key;
-end Memcache.Test;
+end Memcache.Client.Test;

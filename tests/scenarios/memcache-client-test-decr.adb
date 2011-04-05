@@ -2,7 +2,7 @@
 with AUnit.Test_Cases, AUnit.Assertions;
 use AUnit.Test_Cases, AUnit.Assertions;
 
-package body Memcache.Test.Decr is
+package body Memcache.Client.Test.Decr is
     procedure Register_Tests (T : in out Decr_Test) is
         use AUnit.Test_Cases.Registration;
     begin
@@ -26,7 +26,7 @@ package body Memcache.Test.Decr is
 
     procedure Test_Gen_Decr (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : String := Memcache.Generate_Decr ("GoodKey", 100, False);
+        Command : String := Memcache.Client.Generate_Decr ("GoodKey", 100, False);
         Expected : String := Append_CRLF ("decr GoodKey 100");
     begin
         Assert (Command = Expected, "Bad command string");
@@ -35,7 +35,7 @@ package body Memcache.Test.Decr is
 
     procedure Test_Gen_Decr_No_Reply (T :
                       in out AUnit.Test_Cases.Test_Case'Class) is
-        Command : String := Memcache.Generate_Decr ("GoodKey", 100, True);
+        Command : String := Memcache.Client.Generate_Decr ("GoodKey", 100, True);
         Expected : String := Append_CRLF ("decr GoodKey 100 noreply");
     begin
         Assert (Command = Expected, "Bad command string");
@@ -46,7 +46,7 @@ package body Memcache.Test.Decr is
                       in out AUnit.Test_Cases.Test_Case'Class) is
     begin
         declare
-            Command : String := Memcache.Generate_Decr ("Bad Key", 0, False);
+            Command : String := Memcache.Client.Generate_Decr ("Bad Key", 0, False);
         begin
             Assert (False, "Should have raised an Invalid_Key_Error");
         end;
@@ -54,4 +54,4 @@ package body Memcache.Test.Decr is
         when Invalid_Key_Error =>
             Assert (True, "Properly raised Invalid_Key_Error");
     end Test_Gen_Decr_Bad_Key;
-end Memcache.Test.Decr;
+end Memcache.Client.Test.Decr;
