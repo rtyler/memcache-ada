@@ -1,3 +1,6 @@
-sudo: false
-language: c
-install: gprbuild gnat
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq gnat gprbuild
+script:
+  - make
+  - make test
