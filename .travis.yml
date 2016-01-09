@@ -1,6 +1,11 @@
-before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq gnat gprbuild libaunit3.7.1-dev
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - gprbuild
+      - gnat
+
 script:
   - make
   - make test
