@@ -1,11 +1,10 @@
-memcache-ada
-============
+= memcache-ada
+
 
 **memcache-ada** is a work in progress, implementing the Memcached text-protocol
 for communicating with a Memcached server from an Ada program.
 
-Status
-------
+== Status
 
 **memcache-ada** is currently in a very usable state for basic cache usage, that
 said, the library is not very well documented just yet. The source code in the `client/`
@@ -40,8 +39,8 @@ questions
     | quit         |  n       | no plans to support            |
     +--------------+-------------------------------------------+
 
-Warnings
---------
+
+=== Warnings
 
 The `Memcache.Connection` object ***cannot*** be shared between multiple tasks
 concurrently! It is currently designed only for use within a single task at a
@@ -50,8 +49,7 @@ objects across multiple tasks if necessary (I have some ideas regarding connecti
 pooling and sharing between tasks but the library is not quite there yet).
 
 
-Examples
---------
+== Examples
 
 **Creating a connection:**
 
