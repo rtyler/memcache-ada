@@ -1,3 +1,4 @@
+language: c
 sudo: false
 
 addons:
@@ -5,6 +6,7 @@ addons:
     packages:
       - gprbuild
       - gnat
+      - libaunit3
 
 script:
   - make
